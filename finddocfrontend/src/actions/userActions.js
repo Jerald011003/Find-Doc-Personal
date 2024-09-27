@@ -92,7 +92,9 @@ export const register =(name,email,password)=> async(dispatch)=>{
 
        const config = {
            headers:{
-               'Content-type':'application/json'
+               'Content-type':'application/json',
+
+
            }
        }
 
@@ -150,7 +152,9 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
         const config = {
             headers: {
                 'Content-type': 'application/json',
-                Authorization: `Bearer ${userInfo.access}`
+                Authorization: `Bearer ${userInfo.access}`,
+                // Authorization: `Bearer ${userInfo.token}`
+
             }
         }
 
@@ -189,7 +193,8 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
         const config = {
             headers: {
                 'Content-type': 'application/json',
-                Authorization: `Bearer ${userInfo.access}`
+                Authorization: `Bearer ${userInfo.access}`,
+                // Authorization: `Bearer ${userInfo.token}`
             }
         };
 
@@ -315,6 +320,7 @@ export const updateUser = (user) => async (dispatch, getState) => {
             headers: {
                 'Content-type': 'application/json',
                 Authorization: `Bearer ${userInfo.access}`
+
             }
         }
 

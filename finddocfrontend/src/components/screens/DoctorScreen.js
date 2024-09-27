@@ -16,13 +16,6 @@ function DoctorScreen({ match, history }) {
     dispatch(getDoctorDetails(match.params.id));
   }, [dispatch, match]);
 
-  // Redirect to login if the doctor data is not available
-  useEffect(() => {
-    if (error) {
-      history.push('/login');
-    }
-  }, [error, doctor, history]);
-
   const bookHandler = () => {
     history.push(`/book/${match.params.id}?slt=${slt}`);
   };
@@ -35,8 +28,8 @@ function DoctorScreen({ match, history }) {
 
       {loading ? (
         <Loader />
-      ) : error || !doctor ? (  // Handle case where doctor is not defined
-        <Message variant='danger'>Doctor not found or an error occurred.</Message>
+      ) : error ? (  // Handle case where an error occurred
+        <Message variant='danger'>An error occurred. Please try again later.</Message>
       ) : (
         <Row>
           <Col md={6}>

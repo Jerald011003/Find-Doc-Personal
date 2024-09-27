@@ -34,18 +34,23 @@ function Header() {
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll" className="justify-content-between">
           <Nav>
-            {user.name ? (
+            {userInfo || user.name ? (
               <>
                 <LinkContainer to="/">
                   <Nav.Link className="mx-1"><i className="fas fa-user-md"></i> Doctors</Nav.Link>
                 </LinkContainer>
 
                 <LinkContainer to="/allproduct">
-                  <Nav.Link className="mx-1">Medicines</Nav.Link>
-                </LinkContainer>
-                <LinkContainer to="/book">
-                  <Nav.Link className="mx-1">Appointment</Nav.Link>
-                </LinkContainer>
+                <Nav.Link className="mx-1">
+                <i className="fas fa-medkit"></i> Medicines
+                </Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/book">
+                <Nav.Link className="mx-1">
+                  <i className="fas fa-calendar-alt"></i> Appointment
+                </Nav.Link>
+              </LinkContainer>
+
               </>
             ) : null}
           </Nav>
@@ -55,7 +60,7 @@ function Header() {
               <>
                 <LinkContainer to="/cart">
                   <Nav.Link className="mx-1">
-                    {/* <i className="fas fa-cart-arrow-down"></i>  */}
+                    <i className="fas fa-cart-arrow-down"></i> 
                     Cart</Nav.Link>
                 </LinkContainer>
                 <NavDropdown title={displayName} id='username'>

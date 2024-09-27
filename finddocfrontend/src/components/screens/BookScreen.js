@@ -46,7 +46,9 @@ function BookScreen({ match, location, history }) {
       ) : (
         <Row>
           <Col md={6}>
-            <Image src={doctor.image} alt={doctor.name} style={{ width: '650px', height: '400px'}} fluid />
+         
+      <Image src={doctor.image || null} alt={doctor.name || null} style={{ width: '650px', height: '400px' }} fluid />
+
           </Col>
 
           <Col md={3}>
