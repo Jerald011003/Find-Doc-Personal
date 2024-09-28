@@ -1,7 +1,7 @@
 from django.db import models
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from base.models import Doctor, Product, CustomUser, Order, OrderItem, ShippingAddress
+from base.models import Appointment, Doctor, Product, CustomUser, Order, OrderItem, ShippingAddress
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
@@ -44,15 +44,20 @@ class UserSerializer(serializers.ModelSerializer):
         return obj.email
 
 class UserSerializerWithToken(UserSerializer):
-    token = serializers.SerializerMethodField(read_only=True)
+    access = serializers.SerializerMethodField(read_only=True)
+    refresh = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = CustomUser
-        fields = ['id', '_id', 'email', 'name', 'isAdmin', 'token']
+        fields = ['id', 'email', 'name', 'isAdmin', 'access', 'refresh']
 
-    def get_token(self, obj):
+    def get_access(self, obj):
         token = RefreshToken.for_user(obj)
         return str(token.access_token)
+
+    def get_refresh(self, obj):
+        token = RefreshToken.for_user(obj)
+        return str(token)
 
 class ShippingAddressSerializer(serializers.ModelSerializer):
     class Meta:
@@ -104,3 +109,11 @@ class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
         fields = '__all__'
+
+class AppointmentSerializer(serializers.ModelSerializer):
+    doctor = serializers.PrimaryKeyRelatedField(queryset=Doctor.objects.all())  # Ensure queryset is set
+
+    class Meta:
+        model = Appointment
+        fields = ['id', 'user', 'doctor', 'appointment_time', 'created_at']
+        read_only_fields = ['user', 'created_at']

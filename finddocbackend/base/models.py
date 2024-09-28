@@ -53,6 +53,15 @@ class Doctor(models.Model):
     def __str__(self):
         return self.user.first_name
     
+class Appointment(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE) 
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)  
+    appointment_time = models.DateTimeField() 
+    created_at = models.DateTimeField(auto_now_add=True) 
+
+    def __str__(self):
+        return f'Appointment with {self.doctor.user.first_name} on {self.appointment_time}'
+    
 class Product(models.Model):
     user=models.ForeignKey(CustomUser,on_delete=models.SET_NULL,null=True)
     name=models.CharField(max_length=200,null=True,blank=True)

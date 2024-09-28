@@ -31,6 +31,8 @@ function ProfileScreen({ history }) {
 
     const orderListMy = useSelector(state => state.orderListMy);
     const { loading: loadingOrders, error: errorOrders, orders } = orderListMy;
+    
+    const [isOrdersFetched, setIsOrdersFetched] = useState(false);
 
     useEffect(() => {
         if (!userInfo) {
@@ -40,33 +42,33 @@ function ProfileScreen({ history }) {
                 dispatch({ type: USER_UPDATE_PROFILE_RESET });
                 dispatch(getUserDetails('profile'));
             }
-
-            // Ensure orders are only fetched if they aren't already present
-            if (!orders || orders.length === 0) {
-                dispatch(listMyOrders());
+    
+            // Fetch orders only if they haven't been fetched yet
+            if (!isOrdersFetched) {
+                dispatch(listMyOrders()).then(() => setIsOrdersFetched(true));
             }
         }
-
+    
+        // Success message logic remains unchanged
         if (success) {
             setSuccessMessage('Profile updated successfully!');
-            setShowCountdown(true); // Show countdown box
-            
+            setShowCountdown(true);
             const countdownInterval = setInterval(() => {
                 setCountdown(prevCount => {
                     if (prevCount === 1) {
                         clearInterval(countdownInterval);
-                        dispatch(logout()); // Log out when countdown reaches 0
-                        history.push('/'); // Redirect to login
+                        dispatch(logout());
+                        history.push('/');
                     }
                     return prevCount - 1;
                 });
             }, 1000);
         }
-
+    
         return () => {
-            dispatch({ type: USER_UPDATE_PROFILE_RESET }); // Reset profile update state
+            dispatch({ type: USER_UPDATE_PROFILE_RESET });
         };
-    }, [dispatch, history, userInfo, user, success, orders]);
+    }, [dispatch, history, userInfo, user, success, isOrdersFetched]);
 
     const submitHandler = async (e) => {
         e.preventDefault();

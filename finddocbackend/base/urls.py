@@ -2,7 +2,7 @@ from django.urls import path
 from base import views
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
-   
+    TokenRefreshView,
 )
 
 
@@ -10,6 +10,7 @@ urlpatterns = [
     path('',views.getRoutes,name="getRoutes"),
     path('users/register/',views.registerUser,name='register'),
     path('users/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('users/profile/',views.getUserProfile,name="getUserProfiles"),
     path('users/',views.getUsers,name="getUsers"),
     path('users/profile/update/', views.updateUserProfile, name="user-profile-update"),
@@ -29,4 +30,7 @@ urlpatterns = [
 
     path('doctors/', views.getAllDoctors, name='get-all-doctors'),
     path('doctors/<str:pk>/', views.getDoctorDetail, name='get-doctor-detail'),
+
+    path('appointments/create/', views.create_appointment, name='create-appointment'),
+
 ]

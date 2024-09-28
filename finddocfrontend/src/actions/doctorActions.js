@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosInstance from '../actions/axiosInstance';
 import {
     DOCTOR_LIST_REQUEST,
     DOCTOR_LIST_SUCCESS,
@@ -21,7 +21,7 @@ export const listDoctors = () => async (dispatch, getState) => {
     try {
         dispatch({ type: DOCTOR_LIST_REQUEST });
 
-        const { data } = await axios.get('/api/doctors/');
+        const { data } = await axiosInstance.get('/api/doctors/');
 
         dispatch({
             type: DOCTOR_LIST_SUCCESS,
@@ -50,7 +50,7 @@ export const getDoctorDetails = (id) => async (dispatch, getState) => {
             },
         };
 
-        const { data } = await axios.get(`/api/doctors/${id}/`, config);
+        const { data } = await axiosInstance.get(`/api/doctors/${id}/`, config);
 
         dispatch({
             type: DOCTOR_DETAIL_SUCCESS,
@@ -80,7 +80,7 @@ export const createDoctor = (doctorData) => async (dispatch, getState) => {
             },
         };
 
-        const { data } = await axios.post('/api/doctors/create/', doctorData, config);
+        const { data } = await axiosInstance.post('/api/doctors/create/', doctorData, config);
 
         dispatch({
             type: DOCTOR_CREATE_SUCCESS,
@@ -110,7 +110,7 @@ export const updateDoctor = (id, doctorData) => async (dispatch, getState) => {
             },
         };
 
-        const { data } = await axios.put(`/api/doctors/update/${id}/`, doctorData, config);
+        const { data } = await axiosInstance.put(`/api/doctors/update/${id}/`, doctorData, config);
 
         dispatch({
             type: DOCTOR_UPDATE_SUCCESS,
@@ -139,7 +139,7 @@ export const deleteDoctor = (id) => async (dispatch, getState) => {
             },
         };
 
-        await axios.delete(`/api/doctors/delete/${id}/`, config);
+        await axiosInstance.delete(`/api/doctors/delete/${id}/`, config);
 
         dispatch({
             type: DOCTOR_DELETE_SUCCESS,

@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from base.models import Doctor, Product, CustomUser, Order, OrderItem, ShippingAddress
+from base.models import Appointment, Doctor, Product, CustomUser, Order, OrderItem, ShippingAddress
 from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated,IsAdminUser
@@ -11,7 +11,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 # Create your views here.
 from rest_framework import status
 from django.contrib.auth.hashers import make_password
-from .serializer import DoctorSerializer, DoctorDetailSerializer, ProductSerializer,UserSerializer,UserSerializerWithToken,OrderSerializer
+from .serializer import AppointmentSerializer, DoctorSerializer, DoctorDetailSerializer, ProductSerializer,UserSerializer,UserSerializerWithToken,OrderSerializer
 from datetime import datetime
 from rest_framework.permissions import AllowAny
 
@@ -261,3 +261,17 @@ def getDoctorDetail(request, pk):
         return Response(serializer.data)
     except Doctor.DoesNotExist:
         return Response({'detail': 'Doctor not found'}, status=404)
+
+@api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+def create_appointment(request):
+    print(request.data)  # Log the incoming request data
+    if request.method == 'POST':
+        serializer = AppointmentSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            print(serializer.errors)  # Print any validation errors
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
