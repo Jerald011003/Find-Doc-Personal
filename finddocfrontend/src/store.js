@@ -39,11 +39,15 @@ import {
     doctorDeleteReducer,
 } from './reducers/doctorReducers';
 
-import { appointmentCreateReducer } from './reducers/appointmentReducer';
+import { appointmentCreateReducer,
+    appointmentListReducer
+ } from './reducers/appointmentReducer';
 
 const reducer = combineReducers({
     cart:cartReducer,
     appointmentCreate: appointmentCreateReducer,
+    appointmentList: appointmentListReducer,
+    
 
     doctorList: doctorListReducer,
     doctorDetail: doctorDetailReducer,

@@ -39,6 +39,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):  # Include PermissionsMixi
 
     def __str__(self):
         return self.email
+    
+    def get_full_name(self):
+        return f"{self.first_name} {self.last_name}".strip()
 
 class Doctor(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
@@ -53,11 +56,15 @@ class Doctor(models.Model):
     def __str__(self):
         return self.user.first_name
     
+    def get_full_name(self):
+        return f"{self.user.first_name} {self.user.last_name}".strip()
+    
 class Appointment(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE) 
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)  
     appointment_time = models.DateTimeField() 
     created_at = models.DateTimeField(auto_now_add=True) 
+    status = models.CharField(max_length=50, default='pending')  # Set default value here
 
     def __str__(self):
         return f'Appointment with {self.doctor.user.first_name} on {self.appointment_time}'

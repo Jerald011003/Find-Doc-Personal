@@ -32,5 +32,8 @@ urlpatterns = [
     path('doctors/<str:pk>/', views.getDoctorDetail, name='get-doctor-detail'),
 
     path('appointments/create/', views.create_appointment, name='create-appointment'),
+    path('appointments/', views.UserAppointmentsView.as_view(), name='user-appointments'),
+    path('appointments/doctor/', views.DoctorAppointmentsView.as_view(), name='doctor-appointments'),  # Doctor's appointments
+
 
 ]

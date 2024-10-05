@@ -24,12 +24,13 @@ import {
     USER_UPDATE_REQUEST,
     USER_UPDATE_SUCCESS,
     USER_UPDATE_FAIL,
+
 } from '../constants/userConstants';
 
 import { ORDER_LIST_MY_RESET } from '../constants/orderConstants';
 import { CART_CLEAR_ITEMS } from '../constants/cartConstants';
 import axiosInstance from '../actions/axiosInstance';
-
+import {USER_APPOINTMENT_RESET} from '../constants/appointmentConstants';
 export const login = (email, password) => async (dispatch) => {
     try {
         dispatch({ type: USER_LOGIN_REQUEST });
@@ -94,6 +95,7 @@ export const logout = () => (dispatch) => {
     dispatch({ type: ORDER_LIST_MY_RESET });
     dispatch({ type: USER_LIST_RESET });
     dispatch({ type: CART_CLEAR_ITEMS });
+    dispatch({ type: USER_APPOINTMENT_RESET});
 };
 
 export const getUserDetails = (id) => async (dispatch) => {

@@ -111,9 +111,9 @@ class DoctorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class AppointmentSerializer(serializers.ModelSerializer):
-    doctor = serializers.PrimaryKeyRelatedField(queryset=Doctor.objects.all())  # Ensure queryset is set
+    user_name = serializers.CharField(source='user.get_full_name', read_only=True)  # Assuming your User model has a get_full_name method
+    doctor_name = serializers.CharField(source='doctor.get_full_name', read_only=True)  # Assuming the doctor has a get_full_name method
 
     class Meta:
         model = Appointment
-        fields = ['id', 'user', 'doctor', 'appointment_time', 'created_at']
-        read_only_fields = ['user', 'created_at']
+        fields = ['id', 'user_name', 'doctor_name', 'appointment_time', 'status']  # Include necessary fields

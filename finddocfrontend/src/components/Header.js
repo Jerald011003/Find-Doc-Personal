@@ -45,7 +45,7 @@ function Header() {
                 <i className="fas fa-medkit"></i> Medicines
                 </Nav.Link>
               </LinkContainer>
-              <LinkContainer to="/book">
+              <LinkContainer to="/appointments">
                 <Nav.Link className="mx-1">
                   <i className="fas fa-calendar-alt"></i> Appointment
                 </Nav.Link>

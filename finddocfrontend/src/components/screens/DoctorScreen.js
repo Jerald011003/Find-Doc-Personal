@@ -21,17 +21,22 @@ function DoctorScreen({ match, history }) {
   }, [dispatch, match]);
 
   const bookHandler = async () => {
+    const appointmentData = {
+        doctor: doctor.id,  // Use doctor.user._id instead of match.params.id
+        appointment_time: new Date().toISOString()  // Ensure date is in proper ISO format
+    };
+
+    console.log("Sending appointment data:", JSON.stringify(appointmentData));
+
     try {
-        console.log("Creating appointment for doctor ID:", match.params.id);  // Log the ID
-        await dispatch(createAppointment({ 
-            doctorId: match.params.id, 
-            appointmentTime: new Date() 
-        }));
-        history.push(`/confirmation`); 
+        await dispatch(createAppointment(appointmentData));  // Pass correct data to the action
+        history.push(`/appointments`);
     } catch (error) {
         console.error("Failed to create appointment", error);
     }
 };
+
+
 
 
   return (

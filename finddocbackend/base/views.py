@@ -8,12 +8,12 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-# Create your views here.
 from rest_framework import status
 from django.contrib.auth.hashers import make_password
 from .serializer import AppointmentSerializer, DoctorSerializer, DoctorDetailSerializer, ProductSerializer,UserSerializer,UserSerializerWithToken,OrderSerializer
 from datetime import datetime
 from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
 
 
 
@@ -263,15 +263,60 @@ def getDoctorDetail(request, pk):
         return Response({'detail': 'Doctor not found'}, status=404)
 
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def create_appointment(request):
     print(request.data)  # Log the incoming request data
     if request.method == 'POST':
         serializer = AppointmentSerializer(data=request.data, context={'request': request})
+
         if serializer.is_valid():
+            serializer.validated_data['user'] = request.user  # Set the user
+            
+            # Ensure to set the doctor if it's passed in the request data
+            doctor_id = request.data.get('doctor')  # Adjust according to your request payload
+            if doctor_id:
+                try:
+                    serializer.validated_data['doctor'] = Doctor.objects.get(id=doctor_id)
+                except Doctor.DoesNotExist:
+                    return Response({"detail": "Doctor not found."}, status=status.HTTP_404_NOT_FOUND)
+
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             print(serializer.errors)  # Print any validation errors
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class UserAppointmentsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        # Fetch appointments for the authenticated user
+        user = request.user
+        
+        # Get appointments for this user only
+        appointments = Appointment.objects.filter(user=user)
+
+        # Serialize the appointments
+        serializer = AppointmentSerializer(appointments, many=True)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class DoctorAppointmentsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        # Fetch the authenticated doctor instance
+        try:
+            doctor = Doctor.objects.get(user=request.user)  # Assuming `Doctor` model has a ForeignKey to `User`
+        except Doctor.DoesNotExist:
+            return Response({"detail": "Doctor not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Fetch appointments for the authenticated doctor
+        appointments = Appointment.objects.filter(doctor=doctor)
+
+        if appointments.exists():
+            serializer = AppointmentSerializer(appointments, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "No appointments found for this doctor."}, status=status.HTTP_404_NOT_FOUND)

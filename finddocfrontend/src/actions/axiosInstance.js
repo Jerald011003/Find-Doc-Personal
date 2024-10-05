@@ -11,7 +11,6 @@ axiosInstance.interceptors.request.use(
       const currentDate = new Date();
       const decodedToken = parseJwt(userInfo.access);
 
-      // Check if the access token exists and if it's expired
       if (decodedToken && decodedToken.exp * 1000 < currentDate.getTime()) {
         try {
           const response = await axios.post('/api/token/refresh/', {
