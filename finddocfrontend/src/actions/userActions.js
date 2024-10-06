@@ -31,6 +31,7 @@ import { ORDER_LIST_MY_RESET } from '../constants/orderConstants';
 import { CART_CLEAR_ITEMS } from '../constants/cartConstants';
 import axiosInstance from '../actions/axiosInstance';
 import {USER_APPOINTMENT_RESET} from '../constants/appointmentConstants';
+import {DOCTOR_LIST_RESET} from '../constants/doctorConstants'
 export const login = (email, password) => async (dispatch) => {
     try {
         dispatch({ type: USER_LOGIN_REQUEST });
@@ -96,6 +97,7 @@ export const logout = () => (dispatch) => {
     dispatch({ type: USER_LIST_RESET });
     dispatch({ type: CART_CLEAR_ITEMS });
     dispatch({ type: USER_APPOINTMENT_RESET});
+    dispatch({ type: DOCTOR_LIST_RESET});
 };
 
 export const getUserDetails = (id) => async (dispatch) => {

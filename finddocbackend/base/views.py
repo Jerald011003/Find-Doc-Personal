@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from base.models import Appointment, Doctor, Product, CustomUser, Order, OrderItem, ShippingAddress
+from base.models import DoctorReview, Appointment, Doctor, Product, CustomUser, Order, OrderItem, ShippingAddress
 from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated,IsAdminUser
@@ -10,7 +10,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import status
 from django.contrib.auth.hashers import make_password
-from .serializer import AppointmentSerializer, DoctorSerializer, DoctorDetailSerializer, ProductSerializer,UserSerializer,UserSerializerWithToken,OrderSerializer
+from .serializer import DoctorReviewSerializer, AppointmentSerializer, DoctorSerializer, DoctorDetailSerializer, ProductSerializer,UserSerializer,UserSerializerWithToken,OrderSerializer
 from datetime import datetime
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
@@ -263,7 +263,7 @@ def getDoctorDetail(request, pk):
         return Response({'detail': 'Doctor not found'}, status=404)
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def create_appointment(request):
     print(request.data)  # Log the incoming request data
     if request.method == 'POST':
@@ -320,3 +320,89 @@ class DoctorAppointmentsView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({"message": "No appointments found for this doctor."}, status=status.HTTP_404_NOT_FOUND)
+
+class DoctorUpdateAppointmentsView(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        # Fetch the authenticated doctor instance
+        try:
+            doctor = Doctor.objects.get(user=request.user)
+        except Doctor.DoesNotExist:
+            return Response({"detail": "Doctor not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Get appointment ID and new Google Meet link from the request data
+        appointment_id = request.data.get("appointment_id")
+        google_meet_link = request.data.get("google_meet_link")
+
+        # Fetch the specific appointment
+        try:
+            appointment = Appointment.objects.get(id=appointment_id, doctor=doctor)
+        except Appointment.DoesNotExist:
+            return Response({"detail": "Appointment not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Update the appointment's google_meet_link and status
+        appointment.google_meet_link = google_meet_link
+        appointment.status = "Approved"  # Set status to Approved
+        appointment.save()
+
+        # Return the updated appointment details using the AppointmentSerializer
+        serializer = AppointmentSerializer(appointment)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+def createDoctorReview(request, pk):
+    user = request.user
+    
+    # Check if the doctor exists
+    try:
+        doctor = Doctor.objects.get(_id=pk)  # Correct the model name to Doctor
+    except Doctor.DoesNotExist:
+        return Response({'detail': 'Doctor not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    data = request.data
+
+    # 1 Check if the user has consulted the doctor
+    if not Appointment.objects.filter(user=user, doctor=doctor).exists():
+        return Response({'detail': 'You must consult this doctor before leaving a review.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # 2 Review already exists
+    alreadyExists = doctor.review_set.filter(user=user).exists()
+    if alreadyExists:
+        return Response({'detail': 'Already reviewed'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # 3 No Rating or 0
+    if data.get('rating') == 0:
+        return Response({'detail': 'Please select a rating'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # 4 Create review
+    review = DoctorReview.objects.create(
+        user=user,
+        doctor=doctor,
+        name=user.first_name,
+        rating=data['rating'],
+        comment=data.get('comment', ''),  # Use .get() to provide a default
+    )
+
+    # Update doctor rating and number of reviews
+    reviews = doctor.review_set.all()
+    doctor.numReviews = len(reviews)
+
+    total = sum(review.rating for review in reviews)  # Efficiently calculate total rating
+    doctor.rating = total / doctor.numReviews if doctor.numReviews > 0 else 0  # Handle division by zero
+    doctor.save()
+
+    return Response({'detail': 'Review added'}, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def doctor_review_list(request, doctor_id):
+    try:
+        doctor = Doctor.objects.get(user__id=doctor_id)
+    except Doctor.DoesNotExist:
+        return Response({"detail": "Doctor not found."}, status=404)
+    
+    reviews = DoctorReview.objects.filter(doctor=doctor)
+    serializer = DoctorReviewSerializer(reviews, many=True)
+    return Response(serializer.data)

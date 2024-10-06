@@ -31,7 +31,7 @@ import {
     PRODUCT_TOP_FAIL,
 } from '../constants/productConstants'
 
-
+import { USER_LOGOUT } from '../constants/userConstants'
 export const productListReducers =(state={products:[]},action)=>{
 
     switch(action.type){
@@ -41,7 +41,6 @@ export const productListReducers =(state={products:[]},action)=>{
             return {loading:false,products:action.payload}
         case PRODUCT_LIST_FAIL:
             return {loading:false,error: action.payload}
-
         default:
             return state
     }
@@ -58,7 +57,6 @@ export const productDetailsReducers = (state={ product:{reviews:[]} },action) =>
             return {loading:false,product:action.payload}
         case PRODUCT_DETAILS_FAIL:
             return {loading:false, error: action.payload }
-
         default:
             return state
     }

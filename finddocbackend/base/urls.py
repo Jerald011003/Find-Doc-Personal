@@ -35,5 +35,8 @@ urlpatterns = [
     path('appointments/', views.UserAppointmentsView.as_view(), name='user-appointments'),
     path('appointments/doctor/', views.DoctorAppointmentsView.as_view(), name='doctor-appointments'),  # Doctor's appointments
 
+    # path('doctors/<str:pk>/reviews/',views.createDoctorReview,name="create-doctor-review"),
+    path('doctors/<int:doctor_id>/reviews/', views.doctor_review_list, name='doctor-reviews'),
+    path('appointments/doctor/update/', views.DoctorUpdateAppointmentsView.as_view(), name='doctor-appointment-update'),
 
 ]

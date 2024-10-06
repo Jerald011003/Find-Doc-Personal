@@ -15,8 +15,10 @@ function AllProductScreen() {
     },[dispatch])
 
     return (
-        <div>
-
+        <Row className="mt-4">
+                <div className="d-flex justify-content-start mb-3">
+                    <h5 className="">Recommended Medicines</h5>
+                </div>
             {loading ?(
                 <Loader />
             ):error ?(
@@ -36,7 +38,7 @@ function AllProductScreen() {
             
             }
             
-        </div>
+        </Row>
     )
 }
 

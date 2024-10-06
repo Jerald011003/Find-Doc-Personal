@@ -14,8 +14,16 @@ import {
     DOCTOR_DELETE_REQUEST,
     DOCTOR_DELETE_SUCCESS,
     DOCTOR_DELETE_FAIL,
+    DOCTOR_CREATE_REVIEW_REQUEST,
+    DOCTOR_CREATE_REVIEW_SUCCESS,
+    DOCTOR_CREATE_REVIEW_FAIL,
+    DOCTOR_CREATE_REVIEW_RESET,
+    DOCTOR_REVIEWS_REQUEST,
+    DOCTOR_REVIEWS_SUCCESS,
+    DOCTOR_REVIEWS_FAIL,
 } from '../constants/doctorConstants';
 
+import { USER_LOGOUT } from '../constants/userConstants';
 const initialState = {
     doctors: [],
     loading: false,
@@ -30,6 +38,8 @@ export const doctorListReducer = (state = initialState, action) => {
             return { loading: false, doctors: action.payload };
         case DOCTOR_LIST_FAIL:
             return { loading: false, error: action.payload };
+        case USER_LOGOUT:
+            return initialState
         default:
             return state;
     }
@@ -86,3 +96,55 @@ export const doctorDeleteReducer = (state = {}, action) => {
             return state;
     }
 };
+
+export const doctorReviewCreateReducer = (state = {}, action) => {
+    switch (action.type) {
+      case DOCTOR_CREATE_REVIEW_REQUEST:
+        return {
+          loading: true,
+        };
+  
+      case DOCTOR_CREATE_REVIEW_SUCCESS:
+        return {
+          loading: false,
+          success: true,
+        };
+  
+      case DOCTOR_CREATE_REVIEW_FAIL:
+        return {
+          loading: false,
+          error: action.payload,
+        };
+  
+      case DOCTOR_CREATE_REVIEW_RESET:
+        return {};
+  
+      default:
+        return state;
+    }
+  };
+
+  export const doctorReviewsReducer = (state = initialState, action) => {
+    switch (action.type) {
+      case DOCTOR_REVIEWS_REQUEST:
+        return {
+          ...state,
+          loading: true,
+          error: null,
+        };
+      case DOCTOR_REVIEWS_SUCCESS:
+        return {
+          ...state,
+          loading: false,
+          reviews: action.payload,
+        };
+      case DOCTOR_REVIEWS_FAIL:
+        return {
+          ...state,
+          loading: false,
+          error: action.payload,
+        };
+      default:
+        return state;
+    }
+  };

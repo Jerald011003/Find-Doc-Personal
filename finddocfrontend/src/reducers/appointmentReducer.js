@@ -8,8 +8,12 @@ import {
     APPOINTMENT_LIST_SUCCESS,
     APPOINTMENT_LIST_FAIL,
     USER_APPOINTMENT_RESET,
+    APPOINTMENT_UPDATE_REQUEST, 
+    APPOINTMENT_UPDATE_SUCCESS, 
+    APPOINTMENT_UPDATE_FAIL 
 } from '../constants/appointmentConstants';
 
+import { USER_LOGOUT } from '../constants/userConstants';
 const initialState = {
     appointment: [],
     loading: false,
@@ -39,7 +43,24 @@ export const appointmentListReducer = (state = initialState, action) => {
             return { loading: false, error: action.payload };
         case USER_APPOINTMENT_RESET: // Reset the state on logout
             return initialState; // Reset to initial state
+
+        case APPOINTMENT_UPDATE_REQUEST:
+            return { ...state, loading: true };
+        case APPOINTMENT_UPDATE_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                appointments: state.appointments.map((appointment) => 
+                appointment.id === action.payload.id ? action.payload : appointment
+                ),
+            };
+        case APPOINTMENT_UPDATE_FAIL:
+            return { ...state, loading: false, error: action.payload };
+        case USER_LOGOUT:
+            return initialState;
         default:
             return state;
     }
 };
+
+

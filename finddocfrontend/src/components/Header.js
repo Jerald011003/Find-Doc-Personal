@@ -3,7 +3,7 @@ import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { logout, getUserDetails } from "../actions/userActions";
 import { useDispatch, useSelector } from 'react-redux';
-
+// import { finddoclogo } from '../../public/images/finddoclogo'
 function Header() {
   const userLogin = useSelector(state => state.userLogin);
   const { userInfo } = userLogin;
@@ -28,7 +28,16 @@ function Header() {
     <Navbar bg="dark" variant="dark">
       <Container className="justify-content-between">
         <LinkContainer to="/">
-          <Navbar.Brand>Find Doc</Navbar.Brand>
+        <Navbar.Brand style={{ height: '0px' }}> 
+        <img
+          src="/images/finddoclogo.png" 
+          alt="Find Doc Logo"
+          style={{ width: '60px', height: '40px', objectFit: 'cover' }} 
+          className="d-inline-block align-top"
+        />
+        {' '}
+      </Navbar.Brand>
+
         </LinkContainer>
         
         <Navbar.Toggle aria-controls="navbarScroll" />

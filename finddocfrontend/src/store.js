@@ -37,6 +37,8 @@ import {
     doctorCreateReducer,
     doctorUpdateReducer,
     doctorDeleteReducer,
+    doctorReviewCreateReducer,
+    doctorReviewsReducer ,
 } from './reducers/doctorReducers';
 
 import { appointmentCreateReducer,
@@ -47,6 +49,7 @@ const reducer = combineReducers({
     cart:cartReducer,
     appointmentCreate: appointmentCreateReducer,
     appointmentList: appointmentListReducer,
+    doctorReviews: doctorReviewsReducer ,
     
 
     doctorList: doctorListReducer,
@@ -54,7 +57,8 @@ const reducer = combineReducers({
     doctorCreate: doctorCreateReducer,
     doctorUpdate: doctorUpdateReducer,
     doctorDelete: doctorDeleteReducer,
-    
+    doctorReviewCreate: doctorReviewCreateReducer,
+
     userLogin:userLoginReducers,
     userRegister:userRegisterReducers,
     userDetails: userDetailsReducer,

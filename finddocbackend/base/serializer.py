@@ -1,7 +1,7 @@
 from django.db import models
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from base.models import Appointment, Doctor, Product, CustomUser, Order, OrderItem, ShippingAddress
+from base.models import DoctorReview, Appointment, Doctor, Product, CustomUser, Order, OrderItem, ShippingAddress
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
@@ -103,12 +103,7 @@ class DoctorDetailSerializer(serializers.ModelSerializer):
         model = Doctor
         fields = ['id', 'user', 'specialization', 'license_number']
 
-class DoctorSerializer(serializers.ModelSerializer):
-    user = UserSerializer() 
 
-    class Meta:
-        model = Doctor
-        fields = '__all__'
 
 class AppointmentSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(source='user.get_full_name', read_only=True)  # Assuming your User model has a get_full_name method
@@ -116,4 +111,17 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Appointment
-        fields = ['id', 'user_name', 'doctor_name', 'appointment_time', 'status']  # Include necessary fields
+        fields = ['id', 'user_name', 'doctor_name', 'appointment_time', 'status', 'google_meet_link']  # Include necessary fields
+
+class DoctorReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DoctorReview
+        fields = ['_id', 'doctor', 'user', 'name', 'rating', 'comment']
+
+class DoctorSerializer(serializers.ModelSerializer):
+    user = UserSerializer() 
+    reviews = DoctorReviewSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Doctor
+        fields = '__all__'

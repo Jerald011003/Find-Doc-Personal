@@ -1,4 +1,6 @@
 import axiosInstance from '../actions/axiosInstance';
+import axios from "axios";
+
 import {
     DOCTOR_LIST_REQUEST,
     DOCTOR_LIST_SUCCESS,
@@ -15,6 +17,12 @@ import {
     DOCTOR_DELETE_REQUEST,
     DOCTOR_DELETE_SUCCESS,
     DOCTOR_DELETE_FAIL,
+    DOCTOR_CREATE_REVIEW_REQUEST,
+    DOCTOR_CREATE_REVIEW_SUCCESS,
+    DOCTOR_CREATE_REVIEW_FAIL,
+    DOCTOR_REVIEWS_REQUEST,
+    DOCTOR_REVIEWS_SUCCESS,
+    DOCTOR_REVIEWS_FAIL,
 } from '../constants/doctorConstants';
 
 export const listDoctors = () => async (dispatch, getState) => {
@@ -148,6 +156,69 @@ export const deleteDoctor = (id) => async (dispatch, getState) => {
         dispatch({
             type: DOCTOR_DELETE_FAIL,
             payload: error.response && error.response.data.detail ? error.response.data.detail : error.message,
+        });
+    }
+};
+
+export const createDoctorReview =
+  (productId, review) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: DOCTOR_CREATE_REVIEW_REQUEST,
+      });
+
+      // PULLING OUT THE CURRENT USER WE ARE LOGGED IN AS
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      /* MAKING API CALL TO CREATE PRODUCT REVIEW */
+      const { data } = await axios.post(
+        `/api/products/${productId}/reviews/`,
+        review,
+        config
+      );
+
+      /* IF POST REQUEST SUCCESSFULL WE DISPATCH & SEND THE PAYLOAD TO OUR REDUCER */
+      dispatch({
+        type: DOCTOR_CREATE_REVIEW_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: DOCTOR_CREATE_REVIEW_FAIL,
+        payload:
+          error.response && error.response.data.detail
+            ? error.response.data.detail
+            : error.message,
+      });
+    }
+  };
+
+  export const getReviews = (doctorUserId) => async (dispatch) => {
+    try {
+        dispatch({ type: DOCTOR_REVIEWS_REQUEST });
+
+        const { data } = await axiosInstance.get(`/api/doctors/${doctorUserId}/reviews`);
+
+        dispatch({
+            type: DOCTOR_REVIEWS_SUCCESS,
+            payload: data,
+        });
+    } catch (error) {
+        dispatch({
+            type: DOCTOR_REVIEWS_FAIL,
+            payload:
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message,
         });
     }
 };

@@ -64,7 +64,8 @@ class Appointment(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)  
     appointment_time = models.DateTimeField() 
     created_at = models.DateTimeField(auto_now_add=True) 
-    status = models.CharField(max_length=50, default='pending')  # Set default value here
+    status = models.CharField(max_length=50, default='Pending')  
+    google_meet_link = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return f'Appointment with {self.doctor.user.first_name} on {self.appointment_time}'
@@ -86,8 +87,19 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-class Review(models.Model):
-    product=models.ForeignKey(Product,on_delete=models.SET_NULL,null=True)
+# class Review(models.Model):
+#     product=models.ForeignKey(Product,on_delete=models.SET_NULL,null=True)
+#     user=models.ForeignKey(CustomUser,on_delete=models.SET_NULL,null=True)
+#     name=models.CharField(max_length=200,null=True,blank=True)
+#     rating=models.IntegerField(null=True,blank=True,default=0)
+#     comment=models.TextField(null=True,blank=True)
+#     _id=models.AutoField(primary_key=True,editable=False)
+
+#     def __str__(self):
+#         return str(self.rating)
+        
+class DoctorReview(models.Model):
+    doctor=models.ForeignKey(Doctor,on_delete=models.SET_NULL,null=True)
     user=models.ForeignKey(CustomUser,on_delete=models.SET_NULL,null=True)
     name=models.CharField(max_length=200,null=True,blank=True)
     rating=models.IntegerField(null=True,blank=True,default=0)
