@@ -15,8 +15,6 @@ from datetime import datetime
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
-
-
 @api_view(['GET'])
 def getRoutes(request):
     return Response('Hello')
@@ -151,9 +149,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class=MyTokenObtainPairSerializer
     
-        
-
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def  getUserProfile(request):
@@ -181,7 +176,6 @@ def registerUser(request):
     data = request.data
     print(data)
     
-    # Check if the user already exists
     if CustomUser.objects.filter(email=data['email']).exists():
         message = {'details': 'User with this email already exists'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
@@ -195,7 +189,6 @@ def registerUser(request):
         serializer = UserSerializerWithToken(user, many=False)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     except Exception as e:
-        # Log the exception for debugging
         print("Error creating user:", str(e))
         message = {'details': 'An error occurred while creating the user'}
         return Response(message, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -243,8 +236,7 @@ def deleteUser(request, pk):
     userForDeletion.delete()
     return Response('User was deleted')
 
-# Doctors
-
+# !!!Doctors
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])
 def getAllDoctors(request):
@@ -270,10 +262,9 @@ def create_appointment(request):
         serializer = AppointmentSerializer(data=request.data, context={'request': request})
 
         if serializer.is_valid():
-            serializer.validated_data['user'] = request.user  # Set the user
+            serializer.validated_data['user'] = request.user 
             
-            # Ensure to set the doctor if it's passed in the request data
-            doctor_id = request.data.get('doctor')  # Adjust according to your request payload
+            doctor_id = request.data.get('doctor') 
             if doctor_id:
                 try:
                     serializer.validated_data['doctor'] = Doctor.objects.get(id=doctor_id)
@@ -283,7 +274,7 @@ def create_appointment(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
-            print(serializer.errors)  # Print any validation errors
+            print(serializer.errors) 
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -291,13 +282,10 @@ class UserAppointmentsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        # Fetch appointments for the authenticated user
         user = request.user
         
-        # Get appointments for this user only
         appointments = Appointment.objects.filter(user=user)
 
-        # Serialize the appointments
         serializer = AppointmentSerializer(appointments, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -306,13 +294,11 @@ class DoctorAppointmentsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        # Fetch the authenticated doctor instance
         try:
-            doctor = Doctor.objects.get(user=request.user)  # Assuming `Doctor` model has a ForeignKey to `User`
+            doctor = Doctor.objects.get(user=request.user) 
         except Doctor.DoesNotExist:
             return Response({"detail": "Doctor not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        # Fetch appointments for the authenticated doctor
         appointments = Appointment.objects.filter(doctor=doctor)
 
         if appointments.exists():
@@ -325,72 +311,88 @@ class DoctorUpdateAppointmentsView(APIView):
     # permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        # Fetch the authenticated doctor instance
         try:
             doctor = Doctor.objects.get(user=request.user)
         except Doctor.DoesNotExist:
             return Response({"detail": "Doctor not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        # Get appointment ID and new Google Meet link from the request data
         appointment_id = request.data.get("appointment_id")
         google_meet_link = request.data.get("google_meet_link")
 
-        # Fetch the specific appointment
         try:
             appointment = Appointment.objects.get(id=appointment_id, doctor=doctor)
         except Appointment.DoesNotExist:
             return Response({"detail": "Appointment not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        # Update the appointment's google_meet_link and status
         appointment.google_meet_link = google_meet_link
-        appointment.status = "Approved"  # Set status to Approved
+        appointment.status = "Approved" 
         appointment.save()
 
-        # Return the updated appointment details using the AppointmentSerializer
         serializer = AppointmentSerializer(appointment)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getAppointmentById(request, pk):
+    try:
+        appointment = Appointment.objects.get(id=pk)
+        serializer = AppointmentSerializer(appointment)
+        return Response(serializer.data)
+    except Appointment.DoesNotExist:
+        return Response({'detail': 'Appointment does not exist'}, status=404)
+    
+@api_view(['PUT'])
+# @permission_classes([IsAuthenticated])
+def updateAppointmentToPaid(request, pk):
+    try:
+        appointment = Appointment.objects.get(id=pk)
+        appointment.isPaid = True
+        appointment.status = 'Approved'
+        appointment.paidAt = datetime.now()
+        appointment.save()
+        return Response({'detail': 'Order was paid'}, status=status.HTTP_200_OK)
+    except Appointment.DoesNotExist:
+        return Response({'detail': 'Order does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
 # @permission_classes([IsAuthenticated])
 def createDoctorReview(request, pk):
     user = request.user
     
-    # Check if the doctor exists
     try:
-        doctor = Doctor.objects.get(_id=pk)  # Correct the model name to Doctor
+        doctor = Doctor.objects.get(_id=pk) 
     except Doctor.DoesNotExist:
         return Response({'detail': 'Doctor not found'}, status=status.HTTP_404_NOT_FOUND)
 
     data = request.data
 
-    # 1 Check if the user has consulted the doctor
+    # (1) Check if the user has consulted the doctor
     if not Appointment.objects.filter(user=user, doctor=doctor).exists():
         return Response({'detail': 'You must consult this doctor before leaving a review.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # 2 Review already exists
+    # (2) Review already exists
     alreadyExists = doctor.review_set.filter(user=user).exists()
     if alreadyExists:
         return Response({'detail': 'Already reviewed'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # 3 No Rating or 0
+    # (3) No Rating or 0
     if data.get('rating') == 0:
         return Response({'detail': 'Please select a rating'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # 4 Create review
+    # (4) Create review
     review = DoctorReview.objects.create(
         user=user,
         doctor=doctor,
         name=user.first_name,
         rating=data['rating'],
-        comment=data.get('comment', ''),  # Use .get() to provide a default
+        comment=data.get('comment', ''),
     )
 
-    # Update doctor rating and number of reviews
     reviews = doctor.review_set.all()
     doctor.numReviews = len(reviews)
 
-    total = sum(review.rating for review in reviews)  # Efficiently calculate total rating
-    doctor.rating = total / doctor.numReviews if doctor.numReviews > 0 else 0  # Handle division by zero
+    total = sum(review.rating for review in reviews) 
+    doctor.rating = total / doctor.numReviews if doctor.numReviews > 0 else 0 
     doctor.save()
 
     return Response({'detail': 'Review added'}, status=status.HTTP_201_CREATED)

@@ -36,7 +36,7 @@ function PlaceOrderScreen({ history }) {
 
     const placeOrder = () => {
         dispatch(createOrder({
-            orderItems: [cart.cartItems[0]], // Only pass the first item in the array
+            orderItems: [cart.cartItems[0]],
             shippingAddress: cart.shippingAddress,
             paymentMethod: cart.paymentMethod,
             itemsPrice: cart.itemsPrice,
@@ -61,18 +61,13 @@ function PlaceOrderScreen({ history }) {
                                         <ListGroup.Item>
                                             <Row className="justify-content-center">
                                             <Col  className="d-flex justify-content-center">
-    <Image src={cart.cartItems[0].image} alt={cart.cartItems[0].name} fluid rounded />
-</Col>
-
-
-                                               
-
-                                               
-</Row>
-</ListGroup.Item>
-</ListGroup>
-)}
-</ListGroup.Item>
+                                            <Image src={cart.cartItems[0].image} alt={cart.cartItems[0].name} fluid rounded />
+                                        </Col>                                            
+                                        </Row>
+                                        </ListGroup.Item>
+                                        </ListGroup>
+                                        )}
+                                        </ListGroup.Item>
                         
                         <ListGroup.Item>
                             <h2>Details</h2>
@@ -97,10 +92,10 @@ function PlaceOrderScreen({ history }) {
                         </ListGroup.Item>
 
                      
-</ListGroup>
-</Col>
+                        </ListGroup>
+                    </Col>
 
-<Col md={12} className='text-center'>
+                <Col md={12} className='text-center'>
                 <Card>
                     <ListGroup variant='flush'>
                         <ListGroup.Item>

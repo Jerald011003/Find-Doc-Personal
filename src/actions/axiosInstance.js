@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 
-const axiosInstance = axios.create();
-
+const axiosInstance = axios.create({
+  baseURL: 'http://127.0.0.1:8000',
+});
 axiosInstance.interceptors.request.use(
   async (config) => {
     const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null;
@@ -19,21 +20,17 @@ axiosInstance.interceptors.request.use(
 
           const newAccessToken = response.data.access;
 
-          // Update localStorage with the new access token
           userInfo.access = newAccessToken;
           localStorage.setItem('userInfo', JSON.stringify(userInfo));
 
-          // Attach the new access token to the request headers
           config.headers.Authorization = `Bearer ${newAccessToken}`;
         } catch (error) {
           console.error('Error refreshing token', error);
 
-          // Handle refresh token expiration (e.g., force logout or redirect to login)
           localStorage.removeItem('userInfo');
-          window.location.href = '/login'; // Redirect to login page if refresh fails
+          window.location.href = '/login'; 
         }
       } else {
-        // Attach the access token to the request headers if it's still valid
         config.headers.Authorization = `Bearer ${userInfo.access}`;
       }
     }
@@ -45,7 +42,6 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Helper function to decode JWT
 const parseJwt = (token) => {
   try {
     return JSON.parse(atob(token.split('.')[1]));

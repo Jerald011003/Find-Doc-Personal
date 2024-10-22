@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 function Product({ product }) {
   return (
-    <Card className="my-3 p-3 rounded border-1 text-center"> {/* Added text-center to center content */}
+    <Card className="my-3 p-3 rounded border-1 text-center">
 
         <Link to={`/product/${product._id}`}>
           <Card.Img
@@ -13,8 +13,8 @@ function Product({ product }) {
             style={{
               width: '250px',
               height: '200px',
-              margin: '0 auto', // Centers the image horizontally
-              display: 'block', // Ensures the image behaves as a block element
+              margin: '0 auto', 
+              display: 'block',
             }}
           />
         </Link>

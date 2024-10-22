@@ -11,7 +11,6 @@ class SignalingConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        # Broadcast the signaling data to all clients in the group
         await self.channel_layer.group_send("video_chat", {
             'type': 'signal_message',
             'message': data

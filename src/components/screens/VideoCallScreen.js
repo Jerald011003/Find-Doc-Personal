@@ -15,10 +15,8 @@ const VideoCallScreen = ({ appointment, onEndCall }) => {
   const userDetails = useSelector(state => state.userDetails);
   const { user } = userDetails;
   useEffect(() => {
-    // Initialize WebRTC and signaling server
     socketRef.current = io.connect('http://localhost:5000');
 
-    // Join the room
     socketRef.current.emit('join', room);
 
     const getUserMedia = async () => {
@@ -28,13 +26,11 @@ const VideoCallScreen = ({ appointment, onEndCall }) => {
           localVideoRef.current.srcObject = localStream;
         }
         
-        // Create peer connection
         peerConnectionRef.current = new RTCPeerConnection();
         localStream.getTracks().forEach(track => {
           peerConnectionRef.current.addTrack(track, localStream);
         });
 
-        // Handle incoming offers
         socketRef.current.on('offer', async (offer) => {
           await peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(offer));
           const answer = await peerConnectionRef.current.createAnswer();
@@ -42,24 +38,20 @@ const VideoCallScreen = ({ appointment, onEndCall }) => {
           socketRef.current.emit('answer', answer);
         });
 
-        // Handle incoming answers
         socketRef.current.on('answer', (answer) => {
           peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(answer));
         });
 
-        // Handle incoming ICE candidates
         socketRef.current.on('iceCandidate', (candidate) => {
           peerConnectionRef.current.addIceCandidate(new RTCIceCandidate(candidate));
         });
 
-        // Handle ICE candidates to send to the server
         peerConnectionRef.current.onicecandidate = (event) => {
           if (event.candidate) {
             socketRef.current.emit('iceCandidate', event.candidate);
           }
         };
 
-        // Handle remote tracks
         peerConnectionRef.current.ontrack = (event) => {
           if (remoteVideoRef.current) {
             remoteVideoRef.current.srcObject = event.streams[0];
@@ -74,7 +66,6 @@ const VideoCallScreen = ({ appointment, onEndCall }) => {
     getUserMedia();
 
     return () => {
-      // Clean up streams on component unmount
       if (localVideoRef.current && localVideoRef.current.srcObject) {
         const stream = localVideoRef.current.srcObject;
         stream.getTracks().forEach(track => track.stop());
@@ -122,7 +113,6 @@ const VideoCallScreen = ({ appointment, onEndCall }) => {
     <Container className="video-call-screen d-flex flex-column justify-content-center align-items-center">
       <Row className="mb-4">
         <Col className="text-center">
-          {/* <h2>Video Call with Dr. {appointment.doctor_name}</h2> */}
         </Col>
       </Row>
       
@@ -152,11 +142,11 @@ const VideoCallScreen = ({ appointment, onEndCall }) => {
       <Row className="controls d-flex justify-content-center mb-4">
       <Col xs="auto">
         <Button
-            variant={isMuted ? 'danger' : 'success'} // Use 'success' for the green shade when not muted
+            variant={isMuted ? 'danger' : 'success'} 
             onClick={handleToggleMute}
             style={{
-            backgroundColor: isMuted ? '#dc3545' : '#28a745', // Red for muted, green for unmuted
-            color: 'white', // Keep the text/icon color white for visibility
+            backgroundColor: isMuted ? '#dc3545' : '#28a745', 
+            color: 'white', 
             }}
         >
             {isMuted ? (
@@ -168,11 +158,11 @@ const VideoCallScreen = ({ appointment, onEndCall }) => {
         </Col>
         <Col xs="auto">
         <Button
-            variant={isVideoOn ? 'success' : 'danger'} // Use 'success' for green when video is on, 'danger' for red when off
+            variant={isVideoOn ? 'success' : 'danger'} 
             onClick={handleToggleVideo}
             style={{
-            backgroundColor: isVideoOn ? '#28a745' : '#dc3545', // Green for video on, red for video off
-            color: 'white', // Keep the text/icon color white for visibility
+            backgroundColor: isVideoOn ? '#28a745' : '#dc3545', 
+            color: 'white', 
             }}
         >
             {isVideoOn ? (

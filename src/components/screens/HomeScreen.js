@@ -16,12 +16,6 @@ function HomeScreen() {
 
     return (
         <div className="text-center">
-            {/* <h1>Find Your Doctor</h1>
-            <p>Connecting you with the best healthcare professionals.</p>
-            
-            <Button variant="primary" className="mx-2" as={Link} to='/login'>Search for Doctors</Button>
-            <Button variant="secondary" className="mx-2" as={Link} to='/login'>Book an Appointment</Button>
-     */}
             <Row className="mt-4">
                 <div className="d-flex justify-content-start mb-3">
                     <h5 className="">Recommended Doctors</h5>

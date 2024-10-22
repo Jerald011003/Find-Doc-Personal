@@ -42,13 +42,17 @@ import {
 } from './reducers/doctorReducers';
 
 import { appointmentCreateReducer,
-    appointmentListReducer
+    appointmentListReducer,
+    appointmentDetailsReducer,
+    appointmentPayReducer,
  } from './reducers/appointmentReducer';
 
 const reducer = combineReducers({
     cart:cartReducer,
+    appointmentDetails: appointmentDetailsReducer,
     appointmentCreate: appointmentCreateReducer,
     appointmentList: appointmentListReducer,
+    appointmentPay: appointmentPayReducer,
     doctorReviews: doctorReviewsReducer ,
     
 

@@ -22,6 +22,7 @@ import ProfileScreen from './components/screens/ProfileScreen'
 import AllProductScreen from "./components/screens/AllProductScreen";
 import AppointmentsScreen from "./components/screens/AppointmentsScreen"
 import VideoCallScreen from "./components/screens/VideoCallScreen"
+import PayAppointmentScreen from "./components/screens/PayAppointmentScreen"
 
 function App() {
   
@@ -33,6 +34,7 @@ function App() {
           <Route path="/" component={HomeScreen} exact />
           <Route path="/doctor/:id" component={DoctorScreen} exact />
           <Route path="/appointments" component={AppointmentsScreen} exact />
+          <Route path='/appointments/:id' component={PayAppointmentScreen} />
           <Route path="/videocall" component={VideoCallScreen} exact />
           <Route path="/allproduct" component={AllProductScreen} exact />
           <Route path="/login" component={LoginScreen} exact />

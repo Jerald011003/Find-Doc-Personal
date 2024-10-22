@@ -8,7 +8,14 @@ import {
   APPOINTMENT_LIST_FAIL,
   APPOINTMENT_UPDATE_REQUEST, 
   APPOINTMENT_UPDATE_SUCCESS, 
-  APPOINTMENT_UPDATE_FAIL 
+  APPOINTMENT_UPDATE_FAIL,
+  APPOINTMENT_DETAILS_REQUEST,
+  APPOINTMENT_DETAILS_FAIL,
+  APPOINTMENT_DETAILS_SUCCESS,
+
+  APPOINTMENT_PAY_REQUEST,
+  APPOINTMENT_PAY_FAIL,
+  APPOINTMENT_PAY_SUCCESS,
 } from '../constants/appointmentConstants';
 
 export const createAppointment = (appointmentData) => async (dispatch, getState) => {
@@ -20,14 +27,13 @@ export const createAppointment = (appointmentData) => async (dispatch, getState)
     const config = {
       headers: {
         Authorization: `Bearer ${userInfo.access}`,
-        'Content-Type': 'application/json', // Ensure JSON format
+        'Content-Type': 'application/json',
       },
     };
 
-    // Ensure that appointmentData is correctly sent as a JSON string
     const { data } = await axiosInstance.post(
       '/api/appointments/create/', 
-      JSON.stringify(appointmentData),  // Convert JS object to JSON string
+      JSON.stringify(appointmentData), 
       config
     );
 
@@ -70,6 +76,54 @@ export const listUserAppointments = () => async (dispatch, getState) => {
   }
 };
 
+export const getAppointmentDetails = (id) => async (dispatch, getState) => {
+  try {
+      dispatch({ type: APPOINTMENT_DETAILS_REQUEST });
+
+      const { userLogin: { userInfo } } = getState();
+
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.access}`,
+          'Content-Type': 'application/json',
+        },
+      };
+
+      const { data } = await axiosInstance.get(`/api/appointments/${id}/`, config);
+
+      dispatch({ type: APPOINTMENT_DETAILS_SUCCESS, payload: data });
+
+  } catch (error) {
+      dispatch({
+          type: APPOINTMENT_DETAILS_FAIL,
+          payload: error.response && error.response.data.detail
+              ? error.response.data.detail
+              : error.message,
+      });
+  }
+};
+
+export const payAppointment = (id, paymentResult) => async (dispatch) => {
+  try {
+      dispatch({ type: APPOINTMENT_PAY_REQUEST });
+
+      const { data } = await axiosInstance.put(
+          `/api/appointments/${id}/pay/`,
+          paymentResult
+      );
+
+      dispatch({ type: APPOINTMENT_PAY_SUCCESS, payload: data });
+  } catch (error) {
+      dispatch({
+          type: APPOINTMENT_PAY_FAIL,
+          payload: error.response && error.response.data.detail
+              ? error.response.data.detail
+              : error.message,
+      });
+  }
+};
+
 export const listDoctorAppointments = () => async (dispatch, getState) => {
   try {
     dispatch({ type: APPOINTMENT_LIST_REQUEST });
@@ -83,7 +137,7 @@ export const listDoctorAppointments = () => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axiosInstance.get('/api/appointments/doctor/', config); // New endpoint for doctor's appointments
+    const { data } = await axiosInstance.get('/api/appointments/doctor/', config);
 
     dispatch({
       type: APPOINTMENT_LIST_SUCCESS,
@@ -101,12 +155,12 @@ export const updateAppointment = (appointmentId, googleMeetLink) => async (dispa
   try {
     dispatch({ type: APPOINTMENT_UPDATE_REQUEST });
 
-    const { userLogin: { userInfo } } = getState(); // Assuming you have user login info in state
+    const { userLogin: { userInfo } } = getState();
 
     const config = {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userInfo.token}`, // Use the token from the user info
+        Authorization: `Bearer ${userInfo.token}`,
       },
     };
 

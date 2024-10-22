@@ -43,7 +43,6 @@ export const listDoctors = () => async (dispatch, getState) => {
     }
 };
 
-// Get doctor details
 export const getDoctorDetails = (id) => async (dispatch, getState) => {
     try {
         dispatch({ type: DOCTOR_DETAIL_REQUEST });
@@ -72,7 +71,6 @@ export const getDoctorDetails = (id) => async (dispatch, getState) => {
     }
 };
 
-// Create a new doctor
 export const createDoctor = (doctorData) => async (dispatch, getState) => {
     try {
         dispatch({ type: DOCTOR_CREATE_REQUEST });
@@ -102,7 +100,6 @@ export const createDoctor = (doctorData) => async (dispatch, getState) => {
     }
 };
 
-// Update a doctor
 export const updateDoctor = (id, doctorData) => async (dispatch, getState) => {
     try {
         dispatch({ type: DOCTOR_UPDATE_REQUEST });
@@ -132,7 +129,6 @@ export const updateDoctor = (id, doctorData) => async (dispatch, getState) => {
     }
 };
 
-// Delete a doctor
 export const deleteDoctor = (id) => async (dispatch, getState) => {
     try {
         dispatch({ type: DOCTOR_DELETE_REQUEST });
@@ -167,7 +163,6 @@ export const createDoctorReview =
         type: DOCTOR_CREATE_REVIEW_REQUEST,
       });
 
-      // PULLING OUT THE CURRENT USER WE ARE LOGGED IN AS
       const {
         userLogin: { userInfo },
       } = getState();
@@ -179,14 +174,12 @@ export const createDoctorReview =
         },
       };
 
-      /* MAKING API CALL TO CREATE PRODUCT REVIEW */
       const { data } = await axios.post(
         `/api/products/${productId}/reviews/`,
         review,
         config
       );
 
-      /* IF POST REQUEST SUCCESSFULL WE DISPATCH & SEND THE PAYLOAD TO OUR REDUCER */
       dispatch({
         type: DOCTOR_CREATE_REVIEW_SUCCESS,
         payload: data,

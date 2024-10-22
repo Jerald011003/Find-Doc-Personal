@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { listDoctorAppointments, listUserAppointments, updateAppointment } from '../../actions/createAppointment';
+import { getAppointmentDetails, listDoctorAppointments, listUserAppointments, updateAppointment } from '../../actions/createAppointment';
 import { Container, ListGroup, ListGroupItem, Spinner, Alert, Button, Modal, Form } from 'react-bootstrap';
 import VideoCallScreen from './VideoCallScreen';
+import { useParams, useHistory } from 'react-router-dom';
 
-const AppointmentsScreen = () => {
+const AppointmentsScreen = (match) => {
   const [inVideoCall, setInVideoCall] = useState(false);
   const [currentAppointment, setCurrentAppointment] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -13,17 +14,30 @@ const AppointmentsScreen = () => {
   const dispatch = useDispatch();
 
   const appointmentList = useSelector((state) => state.appointmentList);
-  const { loading, error, appointments } = appointmentList;
+  const { loading, error, appointments} = appointmentList;
+
+  const appointmentDetails = useSelector((state) => state.appointmentDetails);
+  const { appointment} = appointmentDetails;
 
   const userDetails = useSelector((state) => state.userDetails);
   const { user } = userDetails;
+
+  const [sdkReady, setSdkReady] = useState(false)
+
+  const history = useHistory();
+  const { id } = useParams();
+  console.log(id);
 
   useEffect(() => {
     if (user) {
       dispatch(listDoctorAppointments());
       dispatch(listUserAppointments());
+      
+      if (id) {
+        dispatch(getAppointmentDetails(id));
+      }
     }
-  }, [dispatch, user]);
+  }, [dispatch, user, id]);
 
   const startVideoCall = (appointment) => {
     setCurrentAppointment(appointment);
@@ -56,8 +70,11 @@ const AppointmentsScreen = () => {
       setGoogleMeetLink('');
     }
   };
+  const handlePayButtonClick = (itemId) => {
+    history.push(`/appointments/${itemId}`);
+  };
 
-
+ 
   return (
     <Container className="appointments-container mt-4">
       {inVideoCall && currentAppointment ? (
@@ -73,6 +90,7 @@ const AppointmentsScreen = () => {
               {Array.isArray(appointments) && appointments.length > 0 ? (
                 appointments.map((item) => (
                   <ListGroupItem key={item.id} className="mb-3">
+                    <h1>ID {item.id}</h1>
                     <h5>Client: {item.user_name}</h5>
                     <h6>Doctor: {item.doctor_name}</h6>
                     <p>Time: {item.appointment_time}</p>
@@ -84,7 +102,7 @@ const AppointmentsScreen = () => {
                         {item.status}
                       </span>
                     </p>
-                    {/* Create Payment Logic Here */}
+
                     {item.status === 'Approved' && (
                       <>
                         <Button variant="primary" onClick={() => startVideoCall(item)} style={{ marginRight: '10px' }}>
@@ -107,6 +125,16 @@ const AppointmentsScreen = () => {
                         </Button>
                       </>
                     )}
+                    {item.status === 'Pending' && user.name === item.user_name && ( 
+                      <>
+                        <Button
+                        variant="warning"
+                        onClick={() => handlePayButtonClick(item.id)} 
+                      >
+                        Pay
+                      </Button>
+                      </>
+                    )}
                   </ListGroupItem>
                 ))
               ) : (
@@ -117,7 +145,7 @@ const AppointmentsScreen = () => {
         </>
       )}
 
-      {/* Modal for updating Google Meet Link */}
+      {/* Custom Modal for Google Meet Link */}
       <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Create Google Meet Link</Modal.Title>

@@ -3,7 +3,7 @@ import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { logout, getUserDetails } from "../actions/userActions";
 import { useDispatch, useSelector } from 'react-redux';
-// import { finddoclogo } from '../../public/images/finddoclogo'
+
 function Header() {
   const userLogin = useSelector(state => state.userLogin);
   const { userInfo } = userLogin;

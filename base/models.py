@@ -24,7 +24,7 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-class CustomUser(AbstractBaseUser, PermissionsMixin):  # Include PermissionsMixin
+class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=255, blank=True)
     last_name = models.CharField(max_length=255, blank=True)
@@ -67,6 +67,7 @@ class Appointment(models.Model):
     status = models.CharField(max_length=50, default='Pending')  
     google_meet_link = models.URLField(blank=True, null=True)
     isPaid=models.BooleanField(default=False)
+    paidAt=models.DateTimeField(auto_now_add=False,null=True,blank=True)
     price=models.DecimalField(max_digits=7,decimal_places=2,null=True,blank=True)
 
     def __str__(self):

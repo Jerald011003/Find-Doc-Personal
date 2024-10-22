@@ -106,12 +106,12 @@ class DoctorDetailSerializer(serializers.ModelSerializer):
 
 
 class AppointmentSerializer(serializers.ModelSerializer):
-    user_name = serializers.CharField(source='user.get_full_name', read_only=True)  # Assuming your User model has a get_full_name method
-    doctor_name = serializers.CharField(source='doctor.get_full_name', read_only=True)  # Assuming the doctor has a get_full_name method
+    user_name = serializers.CharField(source='user.get_full_name', read_only=True)  
+    doctor_name = serializers.CharField(source='doctor.get_full_name', read_only=True) 
 
     class Meta:
         model = Appointment
-        fields = ['id', 'user_name', 'doctor_name', 'appointment_time', 'status', 'google_meet_link', 'isPaid', 'price']  # Include necessary fields
+        fields = ['id', 'user_name', 'doctor_name', 'appointment_time', 'status', 'google_meet_link', 'isPaid', 'price', 'paidAt'] 
 
 class DoctorReviewSerializer(serializers.ModelSerializer):
     class Meta:

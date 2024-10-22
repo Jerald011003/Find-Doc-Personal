@@ -12,21 +12,18 @@ function DoctorScreen({ history }) {
   const { id } = useParams();
   const dispatch = useDispatch();
   
-  // Doctor Details
   const doctorDetail = useSelector((state) => state.doctorDetail); 
   const { loading, error, doctor } = doctorDetail;
 
-  // Reviews
   const doctorReviews = useSelector((state) => state.doctorReviews);
   const { loading: loadingReviews, error: errorReviews, reviews } = doctorReviews;
 
-  // Appointment Create
   const appointmentCreate = useSelector((state) => state.appointmentCreate);
   const { loading: loadingAppointment, error: errorAppointment } = appointmentCreate;
 
   useEffect(() => {
     dispatch(getDoctorDetails(id));
-    dispatch(getReviews(id)); // Fetch reviews for the doctor
+    dispatch(getReviews(id));
   }, [dispatch, id]);
 
   const bookHandler = async () => {

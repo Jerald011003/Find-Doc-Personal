@@ -32,7 +32,6 @@ function OrderScreen({ match, history }) {
         order.itemsPrice = order.orderItems.reduce((acc, item) => acc + item.price * item.qty, 0).toFixed(2)
     }
 
-
     const addPayPalScript = () => {
         const script = document.createElement('script')
         script.type = 'text/javascript'
@@ -87,8 +86,6 @@ function OrderScreen({ match, history }) {
                         <Col md={12} >
                            <Card >
                             <ListGroup variant='flush'>
-                             
-
                                 <ListGroup.Item>
                                     <h2 className='text-center'>Chosen Medicine</h2>
                                     {order.orderItems.length === 0 ? <Message variant='info'>
@@ -103,8 +100,6 @@ function OrderScreen({ match, history }) {
                                                       </Col>
                                                     </Row>
                                                   </ListGroup.Item>
-
-                                                  
                                                 ))}
                                             </ListGroup>
                                         )}

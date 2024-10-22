@@ -20,18 +20,13 @@ import {
 } from '../constants/orderConstants';
 
 import { CART_CLEAR_ITEMS } from '../constants/cartConstants';
-import axiosInstance from '../actions/axiosInstance'; // Import the axiosInstance
+import axiosInstance from '../actions/axiosInstance';
 
 export const createOrder = (order) => async (dispatch, getState) => {
     try {
         dispatch({ type: ORDER_CREATE_REQUEST });
 
         const { userLogin: { userInfo } } = getState();
-
-        // Log the stored userInfo and access token
-        console.log("Stored User Info:", userInfo);
-        console.log("Using Access Token:", userInfo.access);
-        console.log("Order Data:", order);
 
         const { data } = await axiosInstance.post(
             `/api/orders/add/`,

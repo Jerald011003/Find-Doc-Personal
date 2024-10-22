@@ -14,9 +14,9 @@ function ProfileScreen({ history }) {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [message, setMessage] = useState('');
-    const [successMessage, setSuccessMessage] = useState(''); // Success message for profile update
-    const [countdown, setCountdown] = useState(5); // Countdown state
-    const [showCountdown, setShowCountdown] = useState(false); // To toggle countdown visibility
+    const [successMessage, setSuccessMessage] = useState(''); 
+    const [countdown, setCountdown] = useState(5); 
+    const [showCountdown, setShowCountdown] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -43,13 +43,11 @@ function ProfileScreen({ history }) {
                 dispatch(getUserDetails('profile'));
             }
     
-            // Fetch orders only if they haven't been fetched yet
             if (!isOrdersFetched) {
                 dispatch(listMyOrders()).then(() => setIsOrdersFetched(true));
             }
         }
     
-        // Success message logic remains unchanged
         if (success) {
             setSuccessMessage('Profile updated successfully!');
             setShowCountdown(true);

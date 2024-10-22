@@ -1,5 +1,3 @@
-// reducers/appointmentReducer.js
-
 import {
     APPOINTMENT_CREATE_REQUEST,
     APPOINTMENT_CREATE_SUCCESS,
@@ -10,7 +8,15 @@ import {
     USER_APPOINTMENT_RESET,
     APPOINTMENT_UPDATE_REQUEST, 
     APPOINTMENT_UPDATE_SUCCESS, 
-    APPOINTMENT_UPDATE_FAIL 
+    APPOINTMENT_UPDATE_FAIL,
+    APPOINTMENT_DETAILS_REQUEST,
+    APPOINTMENT_DETAILS_FAIL,
+    APPOINTMENT_DETAILS_SUCCESS,
+
+    APPOINTMENT_PAY_REQUEST,
+    APPOINTMENT_PAY_FAIL,
+    APPOINTMENT_PAY_SUCCESS,
+    APPOINTMENT_PAY_RESET,
 } from '../constants/appointmentConstants';
 
 import { USER_LOGOUT } from '../constants/userConstants';
@@ -41,8 +47,8 @@ export const appointmentListReducer = (state = initialState, action) => {
             return { loading: false, appointments: action.payload };
         case APPOINTMENT_LIST_FAIL:
             return { loading: false, error: action.payload };
-        case USER_APPOINTMENT_RESET: // Reset the state on logout
-            return initialState; // Reset to initial state
+        case USER_APPOINTMENT_RESET:
+            return initialState;
 
         case APPOINTMENT_UPDATE_REQUEST:
             return { ...state, loading: true };
@@ -64,3 +70,54 @@ export const appointmentListReducer = (state = initialState, action) => {
 };
 
 
+export const appointmentDetailsReducer = (state = initialState, action) => {
+    switch (action.type) {
+        case APPOINTMENT_DETAILS_REQUEST:
+            return {
+                ...state,
+                loading: true
+            }
+
+        case APPOINTMENT_DETAILS_SUCCESS:
+            return {
+                loading: false,
+                appointment: action.payload
+            }
+
+        case APPOINTMENT_DETAILS_FAIL:
+            return {
+                loading: false,
+                error: action.payload
+            }
+        default:
+            return state
+    }
+}
+
+
+export const appointmentPayReducer = (state = initialState, action) => {
+    switch (action.type) {
+        case APPOINTMENT_PAY_REQUEST:
+            return {
+                loading: true
+            }
+
+        case APPOINTMENT_PAY_SUCCESS:
+            return {
+                loading: false,
+                success: true
+            }
+
+        case APPOINTMENT_PAY_FAIL:
+            return {
+                loading: false,
+                error: action.payload
+            }
+
+        case APPOINTMENT_PAY_RESET:
+            return {}
+
+        default:
+            return state
+    }
+}
