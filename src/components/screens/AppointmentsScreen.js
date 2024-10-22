@@ -76,6 +76,7 @@ const AppointmentsScreen = () => {
                     <h5>Client: {item.user_name}</h5>
                     <h6>Doctor: {item.doctor_name}</h6>
                     <p>Time: {item.appointment_time}</p>
+                    {/* <p>Doctor's Fee: N/A </p> */}
                     <p>
                       Status:
                       <span className={`ms-2 ${getStatusClass(item.status)}`}>
@@ -83,6 +84,7 @@ const AppointmentsScreen = () => {
                         {item.status}
                       </span>
                     </p>
+                    {/* Create Payment Logic Here */}
                     {item.status === 'Approved' && (
                       <>
                         <Button variant="primary" onClick={() => startVideoCall(item)} style={{ marginRight: '10px' }}>

@@ -66,6 +66,8 @@ class Appointment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True) 
     status = models.CharField(max_length=50, default='Pending')  
     google_meet_link = models.URLField(blank=True, null=True)
+    isPaid=models.BooleanField(default=False)
+    price=models.DecimalField(max_digits=7,decimal_places=2,null=True,blank=True)
 
     def __str__(self):
         return f'Appointment with {self.doctor.user.first_name} on {self.appointment_time}'

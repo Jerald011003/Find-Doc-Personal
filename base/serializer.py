@@ -111,7 +111,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Appointment
-        fields = ['id', 'user_name', 'doctor_name', 'appointment_time', 'status', 'google_meet_link']  # Include necessary fields
+        fields = ['id', 'user_name', 'doctor_name', 'appointment_time', 'status', 'google_meet_link', 'isPaid', 'price']  # Include necessary fields
 
 class DoctorReviewSerializer(serializers.ModelSerializer):
     class Meta:
