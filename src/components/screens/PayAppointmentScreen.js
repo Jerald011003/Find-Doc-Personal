@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import { PayPalButton } from 'react-paypal-button-v2';
 import Loader from '../Loader';
 
-const PayAppointmentScreen = () => {
+const PayAppointmentScreen = ({history}) => {
     const { id } = useParams();
     const dispatch = useDispatch();
 
@@ -51,9 +51,8 @@ const PayAppointmentScreen = () => {
     const successPaymentHandler = (paymentResult) => {
         console.log('Payment Result:', paymentResult);
         dispatch(payAppointment(id, paymentResult));
+        history.push('/appointments')
     };
-
-    console.log(appointment)
 
     return (
         <div className="payment-screen-container">
@@ -70,15 +69,15 @@ const PayAppointmentScreen = () => {
                             <h6>Doctor: {appointment.doctor_name}</h6>
                             <p>Time: {appointment.appointment_time}</p>
                             <p>Status: {appointment.status}</p>
-                            <p>Price: {appointment.price}</p>
+                            <p>Price: {appointment.fee}</p>
 
                             {!sdkReady ? (
                                 <Loader />
                             ) : (
                                 <PayPalButton
-                                    amount={appointment.price}
+                                    amount={appointment.fee}
                                     onSuccess={successPaymentHandler}
-                                    onError={(err) => console.error(err)}
+                                    // onError={(err) => console.error(err)}
                                     options={{
                                         clientId: "AfWCkVHsxTIHY7IU9rVzqHLAFUcZjU6Lnrqf8h81x7cIdpIJHvomiPo4Vr_RqlayO56tCESJ9D0r6ldo",
                                         currency: "USD",

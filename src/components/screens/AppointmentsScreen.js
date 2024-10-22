@@ -5,7 +5,7 @@ import { Container, ListGroup, ListGroupItem, Spinner, Alert, Button, Modal, For
 import VideoCallScreen from './VideoCallScreen';
 import { useParams, useHistory } from 'react-router-dom';
 
-const AppointmentsScreen = (match) => {
+const AppointmentsScreen = ({history}) => {
   const [inVideoCall, setInVideoCall] = useState(false);
   const [currentAppointment, setCurrentAppointment] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -22,22 +22,11 @@ const AppointmentsScreen = (match) => {
   const userDetails = useSelector((state) => state.userDetails);
   const { user } = userDetails;
 
-  const [sdkReady, setSdkReady] = useState(false)
-
-  const history = useHistory();
-  const { id } = useParams();
-  console.log(id);
-
   useEffect(() => {
     if (user) {
       dispatch(listDoctorAppointments());
       dispatch(listUserAppointments());
-      
-      if (id) {
-        dispatch(getAppointmentDetails(id));
-      }
-    }
-  }, [dispatch, user, id]);
+  }}, [dispatch, user]);
 
   const startVideoCall = (appointment) => {
     setCurrentAppointment(appointment);
@@ -90,12 +79,13 @@ const AppointmentsScreen = (match) => {
               {Array.isArray(appointments) && appointments.length > 0 ? (
                 appointments.map((item) => (
                   <ListGroupItem key={item.id} className="mb-3">
-                    <h1>ID {item.id}</h1>
-                    <h5>Client: {item.user_name}</h5>
+                    {/* <h1>ID {item.id}</h1> */}
+                    <h6>Client: {item.user_name}</h6>
                     <h6>Doctor: {item.doctor_name}</h6>
+                    <p></p>
                     <p>Time: {item.appointment_time}</p>
-                    {/* <p>Doctor's Fee: N/A </p> */}
-                    <p>
+                    <p>Doctor's Fee: {item.fee} </p>
+                    <p >
                       Status:
                       <span className={`ms-2 ${getStatusClass(item.status)}`}>
                         {getStatusIcon(item.status)}

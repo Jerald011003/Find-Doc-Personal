@@ -68,10 +68,13 @@ class Appointment(models.Model):
     google_meet_link = models.URLField(blank=True, null=True)
     isPaid=models.BooleanField(default=False)
     paidAt=models.DateTimeField(auto_now_add=False,null=True,blank=True)
-    price=models.DecimalField(max_digits=7,decimal_places=2,null=True,blank=True)
+    # price=models.DecimalField(max_digits=7,decimal_places=2,null=True,blank=True)
 
     def __str__(self):
         return f'Appointment with {self.doctor.user.first_name} on {self.appointment_time}'
+    
+    def __str__(self):
+        return f"Appointment for {self.user} with {self.doctor}"
     
 class Product(models.Model):
     user=models.ForeignKey(CustomUser,on_delete=models.SET_NULL,null=True)
