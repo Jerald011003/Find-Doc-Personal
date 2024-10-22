@@ -54,7 +54,7 @@ const PayAppointmentScreen = () => {
     };
 
     console.log(appointment)
-
+    // Continue, it should reload automatically and go back to appointments
     return (
         <div className="payment-screen-container">
             {loading ? (
