@@ -134,7 +134,8 @@ def updateOrderToDelivered(request, pk):
         return Response({'detail': 'Order was delivered'}, status=status.HTTP_200_OK)
     except Order.DoesNotExist:
         return Response({'detail': 'Order does not exist'}, status=status.HTTP_404_NOT_FOUND)
-    
+
+# !!Token Auth
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     def validate(self,attrs):
