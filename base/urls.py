@@ -36,9 +36,11 @@ urlpatterns = [
     path('appointments/doctor/', views.DoctorAppointmentsView.as_view(), name='doctor-appointments'),
     path('appointments/<int:pk>/', views.getAppointmentById, name='appointment-detail'),
     path('appointments/<int:pk>/pay/', views.updateAppointmentToPaid, name='appoinment-pay'),
+    path('appointments/<int:pk>/review/', views.updateAppointmentToReviewed, name='appointment-review'),
 
-    # path('doctors/<str:pk>/reviews/',views.createDoctorReview,name="create-doctor-review"),
+    path('doctors/<str:pk>/create-reviews/',views.createDoctorReview,name="create-doctor-review"),
     path('doctors/<int:doctor_id>/reviews/', views.doctor_review_list, name='doctor-reviews'),
     path('appointments/doctor/update/', views.DoctorUpdateAppointmentsView.as_view(), name='doctor-appointment-update'),
+    path('appointments/doctor/consulted-update/', views.DoctorUpdateStatusToConsultedView.as_view(), name='doctor-appointment-consulted-update'),
 
 ]

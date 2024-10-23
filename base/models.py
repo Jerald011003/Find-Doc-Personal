@@ -52,6 +52,7 @@ class Doctor(models.Model):
     description = models.TextField(blank=True, null=True) 
     max_appointments = models.PositiveIntegerField(default=1) 
     image=models.ImageField(null=True,blank=True)
+    # _id=models.AutoField(primary_key=True,editable=False)
 
     def __str__(self):
         return self.user.first_name
@@ -68,6 +69,7 @@ class Appointment(models.Model):
     google_meet_link = models.URLField(blank=True, null=True)
     isPaid=models.BooleanField(default=False)
     paidAt=models.DateTimeField(auto_now_add=False,null=True,blank=True)
+    isReviewed=models.BooleanField(default=False)
     # price=models.DecimalField(max_digits=7,decimal_places=2,null=True,blank=True)
 
     def __str__(self):
@@ -105,7 +107,7 @@ class Product(models.Model):
 #         return str(self.rating)
         
 class DoctorReview(models.Model):
-    doctor=models.ForeignKey(Doctor,on_delete=models.SET_NULL,null=True)
+    doctor=models.ForeignKey(Doctor,on_delete=models.SET_NULL,null=True, related_name='reviews')
     user=models.ForeignKey(CustomUser,on_delete=models.SET_NULL,null=True)
     name=models.CharField(max_length=200,null=True,blank=True)
     rating=models.IntegerField(null=True,blank=True,default=0)
@@ -113,7 +115,7 @@ class DoctorReview(models.Model):
     _id=models.AutoField(primary_key=True,editable=False)
 
     def __str__(self):
-        return str(self.rating)
+        return f'Review by {self.user.first_name} for Dr. {self.doctor.get_full_name()}'
 
 
 class Order(models.Model):

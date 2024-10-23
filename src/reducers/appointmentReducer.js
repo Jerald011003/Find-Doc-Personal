@@ -17,6 +17,10 @@ import {
     APPOINTMENT_PAY_FAIL,
     APPOINTMENT_PAY_SUCCESS,
     APPOINTMENT_PAY_RESET,
+
+    APPOINTMENT_REVIEW_REQUEST,
+    APPOINTMENT_REVIEW_FAIL,
+    APPOINTMENT_REVIEW_SUCCESS,
 } from '../constants/appointmentConstants';
 
 import { USER_LOGOUT } from '../constants/userConstants';
@@ -116,6 +120,30 @@ export const appointmentPayReducer = (state = initialState, action) => {
 
         case APPOINTMENT_PAY_RESET:
             return {}
+
+        default:
+            return state
+    }
+}
+
+export const appointmentReviewReducer = (state = initialState, action) => {
+    switch (action.type) {
+        case APPOINTMENT_REVIEW_REQUEST:
+            return {
+                loading: true
+            }
+
+        case APPOINTMENT_REVIEW_SUCCESS:
+            return {
+                loading: false,
+                success: true
+            }
+
+        case APPOINTMENT_REVIEW_FAIL:
+            return {
+                loading: false,
+                error: action.payload
+            }
 
         default:
             return state

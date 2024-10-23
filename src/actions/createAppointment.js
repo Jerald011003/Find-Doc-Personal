@@ -16,6 +16,10 @@ import {
   APPOINTMENT_PAY_REQUEST,
   APPOINTMENT_PAY_FAIL,
   APPOINTMENT_PAY_SUCCESS,
+
+  APPOINTMENT_REVIEW_REQUEST,
+  APPOINTMENT_REVIEW_FAIL,
+  APPOINTMENT_REVIEW_SUCCESS,
 } from '../constants/appointmentConstants';
 
 export const createAppointment = (appointmentData) => async (dispatch, getState) => {
@@ -124,6 +128,26 @@ export const payAppointment = (id, paymentResult) => async (dispatch) => {
   }
 };
 
+export const reviewAppointment = (id) => async (dispatch) => {
+  try {
+      dispatch({ type: APPOINTMENT_REVIEW_REQUEST });
+
+      const { data } = await axiosInstance.put(
+          `/api/appointments/${id}/review/`
+      );
+
+      dispatch({ type: APPOINTMENT_REVIEW_SUCCESS, payload: data });
+  } catch (error) {
+      dispatch({
+          type: APPOINTMENT_REVIEW_FAIL,
+          payload: error.response && error.response.data.detail
+              ? error.response.data.detail
+              : error.message,
+      });
+  }
+};
+
+
 export const listDoctorAppointments = () => async (dispatch, getState) => {
   try {
     dispatch({ type: APPOINTMENT_LIST_REQUEST });
@@ -164,10 +188,40 @@ export const updateAppointment = (appointmentId, googleMeetLink) => async (dispa
       },
     };
 
-    // Use the Axios instance here
     const { data } = await axiosInstance.post(
       `/api/appointments/doctor/update/`,
       { appointment_id: appointmentId, google_meet_link: googleMeetLink },
+      config
+    );
+
+    dispatch({ type: APPOINTMENT_UPDATE_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: APPOINTMENT_UPDATE_FAIL,
+      payload: error.response && error.response.data.detail
+        ? error.response.data.detail
+        : error.message,
+    });
+  }
+};
+
+
+export const updateAppointmentStatus = (appointmentId, status) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: APPOINTMENT_UPDATE_REQUEST });
+
+    const { userLogin: { userInfo } } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axiosInstance.post(
+      `/api/appointments/doctor/consulted-update/`,
+      { appointment_id: appointmentId, status: status },
       config
     );
 

@@ -138,11 +138,9 @@ function DoctorScreen({ history }) {
                   <ListGroup variant="flush">
                     {reviews.map((review) => (
                      <ListGroup.Item key={review._id}>
-                     <strong>{review.name}</strong>
+                     <strong>{review.user_name}</strong>
                      <Rating value={review.rating} color="f8e825" />
-                     
                      <p>{review.createdAt ? review.createdAt.substring(0, 10) : "Date not available"}</p>
-                     
                      <p>{review.comment}</p>
                    </ListGroup.Item>
                    

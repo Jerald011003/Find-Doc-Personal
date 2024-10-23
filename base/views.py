@@ -331,6 +331,29 @@ class DoctorUpdateAppointmentsView(APIView):
         serializer = AppointmentSerializer(appointment)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class DoctorUpdateStatusToConsultedView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            doctor = Doctor.objects.get(user=request.user)
+        except Doctor.DoesNotExist:
+            return Response({"detail": "Doctor not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        appointment_id = request.data.get("appointment_id")
+
+        try:
+            appointment = Appointment.objects.get(id=appointment_id, doctor=doctor)
+        except Appointment.DoesNotExist:
+            return Response({"detail": "Appointment not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Update the status to "Consulted"
+        appointment.status = "Consulted"
+        appointment.save()
+
+        serializer = AppointmentSerializer(appointment)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getAppointmentById(request, pk):
@@ -350,17 +373,29 @@ def updateAppointmentToPaid(request, pk):
         appointment.status = 'Approved'
         appointment.paidAt = datetime.now()
         appointment.save()
-        return Response({'detail': 'Order was paid'}, status=status.HTTP_200_OK)
+        return Response({'detail': 'Appointment was paid'}, status=status.HTTP_200_OK)
     except Appointment.DoesNotExist:
-        return Response({'detail': 'Order does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'detail': 'Appointment does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['PUT'])
+# @permission_classes([IsAuthenticated])
+def updateAppointmentToReviewed(request, pk):
+    try:
+        appointment = Appointment.objects.get(id=pk)
+        appointment.isReviewed = True
+        appointment.status = 'Reviewed'
+        appointment.save()
+        return Response({'detail': 'Appointment was reviewed'}, status=status.HTTP_200_OK)
+    except Appointment.DoesNotExist:
+        return Response({'detail': 'Appointment does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def createDoctorReview(request, pk):
     user = request.user
-    
+
     try:
-        doctor = Doctor.objects.get(_id=pk) 
+        doctor = Doctor.objects.get(id=pk)
     except Doctor.DoesNotExist:
         return Response({'detail': 'Doctor not found'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -370,29 +405,23 @@ def createDoctorReview(request, pk):
     if not Appointment.objects.filter(user=user, doctor=doctor).exists():
         return Response({'detail': 'You must consult this doctor before leaving a review.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # (2) Review already exists
-    alreadyExists = doctor.review_set.filter(user=user).exists()
-    if alreadyExists:
-        return Response({'detail': 'Already reviewed'}, status=status.HTTP_400_BAD_REQUEST)
-
-    # (3) No Rating or 0
+    # (2) No Rating or 0
     if data.get('rating') == 0:
         return Response({'detail': 'Please select a rating'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # (4) Create review
+    # (3) Create review
     review = DoctorReview.objects.create(
         user=user,
         doctor=doctor,
-        name=user.first_name,
         rating=data['rating'],
-        comment=data.get('comment', ''),
+        comment=data.get('comment', '')
     )
 
-    reviews = doctor.review_set.all()
-    doctor.numReviews = len(reviews)
+    reviews = doctor.reviews.all()
+    doctor.numReviews = reviews.count()
 
-    total = sum(review.rating for review in reviews) 
-    doctor.rating = total / doctor.numReviews if doctor.numReviews > 0 else 0 
+    total = sum([rev.rating for rev in reviews])
+    doctor.rating = total / doctor.numReviews if doctor.numReviews > 0 else 0
     doctor.save()
 
     return Response({'detail': 'Review added'}, status=status.HTTP_201_CREATED)

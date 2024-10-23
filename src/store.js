@@ -45,6 +45,7 @@ import { appointmentCreateReducer,
     appointmentListReducer,
     appointmentDetailsReducer,
     appointmentPayReducer,
+    appointmentReviewReducer,
  } from './reducers/appointmentReducer';
 
 const reducer = combineReducers({
@@ -53,6 +54,7 @@ const reducer = combineReducers({
     appointmentCreate: appointmentCreateReducer,
     appointmentList: appointmentListReducer,
     appointmentPay: appointmentPayReducer,
+    appointmentReview: appointmentReviewReducer,
     doctorReviews: doctorReviewsReducer ,
     
 

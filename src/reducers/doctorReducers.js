@@ -97,7 +97,7 @@ export const doctorDeleteReducer = (state = {}, action) => {
     }
 };
 
-export const doctorReviewCreateReducer = (state = {}, action) => {
+export const doctorReviewCreateReducer = (state = initialState, action) => {
     switch (action.type) {
       case DOCTOR_CREATE_REVIEW_REQUEST:
         return {

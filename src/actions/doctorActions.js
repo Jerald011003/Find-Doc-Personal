@@ -157,7 +157,7 @@ export const deleteDoctor = (id) => async (dispatch, getState) => {
 };
 
 export const createDoctorReview =
-  (productId, review) => async (dispatch, getState) => {
+  (doctorId, review) => async (dispatch, getState) => {
     try {
       dispatch({
         type: DOCTOR_CREATE_REVIEW_REQUEST,
@@ -170,12 +170,12 @@ export const createDoctorReview =
       const config = {
         headers: {
           "Content-type": "application/json",
-          Authorization: `Bearer ${userInfo.token}`,
+          Authorization: `Bearer ${userInfo.access}`,
         },
       };
 
       const { data } = await axios.post(
-        `/api/products/${productId}/reviews/`,
+        `/api/doctors/${doctorId}/create-reviews/`,
         review,
         config
       );
