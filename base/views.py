@@ -401,11 +401,9 @@ def createDoctorReview(request, pk):
 
     data = request.data
 
-    # (1) Check if the user has consulted the doctor
     if not Appointment.objects.filter(user=user, doctor=doctor).exists():
         return Response({'detail': 'You must consult this doctor before leaving a review.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # (2) No Rating or 0
     if data.get('rating') == 0:
         return Response({'detail': 'Please select a rating'}, status=status.HTTP_400_BAD_REQUEST)
 
