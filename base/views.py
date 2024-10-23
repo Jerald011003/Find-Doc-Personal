@@ -277,7 +277,7 @@ def create_appointment(request):
             print(serializer.errors) 
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+# !!Doctor & User Appointments
 class UserAppointmentsView(APIView):
     permission_classes = [IsAuthenticated]
 
