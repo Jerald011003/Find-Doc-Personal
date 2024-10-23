@@ -409,7 +409,6 @@ def createDoctorReview(request, pk):
     if data.get('rating') == 0:
         return Response({'detail': 'Please select a rating'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # (3) Create review
     review = DoctorReview.objects.create(
         user=user,
         doctor=doctor,
