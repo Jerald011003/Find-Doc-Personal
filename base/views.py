@@ -354,6 +354,7 @@ class DoctorUpdateStatusToConsultedView(APIView):
         serializer = AppointmentSerializer(appointment)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+# !!Appointments
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getAppointmentById(request, pk):
