@@ -148,7 +148,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class=MyTokenObtainPairSerializer
-    
+
+# !!Users
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def  getUserProfile(request):
@@ -227,7 +228,6 @@ def updateUser(request, pk):
     serializer = UserSerializer(user, many=False)
 
     return Response(serializer.data)
-
 
 @api_view(['DELETE'])
 @permission_classes([IsAdminUser])
