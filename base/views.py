@@ -254,6 +254,7 @@ def getDoctorDetail(request, pk):
     except Doctor.DoesNotExist:
         return Response({'detail': 'Doctor not found'}, status=404)
 
+# !!Create Appointments
 @api_view(['POST'])
 # @permission_classes([IsAuthenticated])
 def create_appointment(request):
