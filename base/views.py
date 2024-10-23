@@ -19,6 +19,7 @@ from rest_framework.views import APIView
 def getRoutes(request):
     return Response('Hello')
 
+# !!Products
 @api_view(['GET'])
 def getProducts(request):
     products=Product.objects.all()
