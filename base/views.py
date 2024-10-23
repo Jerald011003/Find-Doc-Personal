@@ -389,6 +389,7 @@ def updateAppointmentToReviewed(request, pk):
     except Appointment.DoesNotExist:
         return Response({'detail': 'Appointment does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
+# !!Doctor Reviews
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def createDoctorReview(request, pk):
