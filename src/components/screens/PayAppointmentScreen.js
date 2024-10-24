@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAppointmentDetails, payAppointment } from '../../actions/createAppointment';
-import { Spinner, Alert, Button } from 'react-bootstrap';
+import { Spinner, Alert, Button, Card, Container, Row, Col } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { PayPalButton } from 'react-paypal-button-v2';
 import Loader from '../Loader';
+import './PayAppointmentScreen.css'; 
 
 const PayAppointmentScreen = ({history}) => {
     const { id } = useParams();
@@ -55,40 +56,46 @@ const PayAppointmentScreen = ({history}) => {
     };
 
     return (
-        <div className="payment-screen-container">
-            {loading ? (
-                <Spinner animation="border" variant="primary" />
-            ) : error ? (
-                <Alert variant="danger">{error}</Alert>
-            ) : (
-                <div>
-                    <h1>Pay for Appointment</h1>
-                    {appointment && (
-                        <div>
-                            <h5>Client: {appointment.user_name}</h5>
-                            <h6>Doctor: {appointment.doctor_name}</h6>
-                            <p>Time: {appointment.appointment_time}</p>
-                            <p>Status: {appointment.status}</p>
-                            <p>Price: {appointment.fee}</p>
+        <Container className="payment-screen-container my-5">
+        {loading ? (
+            <Spinner animation="border" variant="primary" />
+        ) : error ? (
+            <Alert variant="danger">{error}</Alert>
+        ) : (
+            <Row className="justify-content-center">
+                <Col md={8}>
+                    <Card className="p-4 shadow">
+                        <h4 className="text-center mb-4">Pay for Appointment</h4>
+                        {appointment && (
+                            <div className="appointment-details">
+                                {/* <h5 className="font-weight-bold">Client: <span>{appointment.user_name}</span></h5> */}
+                                <h5 className="font-weight-bold">Dr. <span>{appointment.doctor_name}</span></h5>
+                                <h6 className="font-weight-normal">Time: <span>{appointment.appointment_time}</span></h6>
+                                <h6 className="font-weight-normal">Status: <span>{appointment.status}</span></h6>
+                                <h6 className="font-weight-normal">Price: <span className="text-success">${appointment.fee}</span></h6>
 
-                            {!sdkReady ? (
-                                <Loader />
-                            ) : (
-                                <PayPalButton
-                                    amount={appointment.fee}
-                                    onSuccess={successPaymentHandler}
-                                    // onError={(err) => console.error(err)}
-                                    options={{
-                                        clientId: "AfWCkVHsxTIHY7IU9rVzqHLAFUcZjU6Lnrqf8h81x7cIdpIJHvomiPo4Vr_RqlayO56tCESJ9D0r6ldo",
-                                        currency: "USD",
-                                    }}
-                                />
-                            )}
-                        </div>
-                    )}
-                </div>
-            )}
-        </div>
+                                {!sdkReady ? (
+                                    <Loader />
+                                ) : (
+                                    <div className="text-center paypal-button">
+                                        <PayPalButton
+                                            className="paypal-button"
+                                            amount={appointment.fee}
+                                            onSuccess={successPaymentHandler}
+                                            options={{
+                                                clientId: "AfWCkVHsxTIHY7IU9rVzqHLAFUcZjU6Lnrqf8h81x7cIdpIJHvomiPo4Vr_RqlayO56tCESJ9D0r6ldo",
+                                                currency: "USD",
+                                            }}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </Card>
+                </Col>
+            </Row>
+        )}
+    </Container>
     );
 };
 
