@@ -25,7 +25,7 @@ function Doctor({ doctor }) {
         <div className="d-flex justify-content-between align-items-center">
           <div className="d-flex align-items-center">
             <span className="text-warning">&#9733;</span> 
-            <span className="ml-1">{doctor.rating} ({doctor.numReviews} Reviews)</span>
+            <span className="ml-1">{doctor.rating} ({doctor.numReviews})</span>
           </div>
 
           <span className="text-success font-weight-bold">${doctor.charge_rates}/hr</span>

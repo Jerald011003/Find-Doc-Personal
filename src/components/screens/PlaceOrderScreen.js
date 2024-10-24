@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Row, Col, ListGroup, Image, Card } from 'react-bootstrap'
+import { Button, Row, Col, ListGroup, Image, Card, Container } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../Message'
@@ -47,33 +47,17 @@ function PlaceOrderScreen({ history }) {
     }
 
     return (
-        <div>
+        <Container  className='align-items-center justify-content-center' style={{ width: '700px' }}>
             <CheckoutSteps step1 step2 step3 step4 />
             <Row>
                 <Col md={12}>
                     <ListGroup variant='flush' className='text-center'>
+
                     <ListGroup.Item>
-                           
-                            {cart.cartItems.length === 0 ? <Message variant='info'>
-                                Your cart is empty
-                            </Message> : (
-                                    <ListGroup>
-                                        <ListGroup.Item>
-                                            <Row className="justify-content-center">
-                                            <Col  className="d-flex justify-content-center">
-                                            <Image src={cart.cartItems[0].image} alt={cart.cartItems[0].name} fluid rounded />
-                                        </Col>                                            
-                                        </Row>
-                                        </ListGroup.Item>
-                                        </ListGroup>
-                                        )}
-                                        </ListGroup.Item>
-                        
-                        <ListGroup.Item>
-                            <h2>Details</h2>
+                            <h2 style={{textAlign: 'left'}}>Address</h2>
                          
 
-                            <p>
+                            <p style={{textAlign: 'left'}}>
                            
                                 {cart.shippingAddress.address},  {cart.shippingAddress.city}
                                 {'  '}
@@ -82,6 +66,27 @@ function PlaceOrderScreen({ history }) {
                                 {cart.shippingAddress.country}
                             </p>
                         </ListGroup.Item>
+
+                    <ListGroup>
+                           
+                            {cart.cartItems.length === 0 ? <Message variant='info'>
+                                Your cart is empty
+                            </Message> : (
+                                    <ListGroup>
+                                        <ListGroup.Item>
+                                            <Row className="justify-content-center">
+                                            <Col  className="d-flex justify-content-center">
+                                            <div style={{ width: '150px' }}>
+                                            <Image src={cart.cartItems[0].image} alt={cart.cartItems[0].name} fluid rounded />
+                                            </div>
+                                        </Col>                                            
+                                        </Row>
+                                        </ListGroup.Item>
+                                        </ListGroup>
+                                        )}
+                    </ListGroup>
+                        
+
 
                         <ListGroup.Item>
                             <h2>Payment Method</h2>
@@ -98,23 +103,13 @@ function PlaceOrderScreen({ history }) {
                 <Col md={12} className='text-center'>
                 <Card>
                     <ListGroup variant='flush'>
-                        <ListGroup.Item>
-                            {/* <h2>Cost</h2> */}
-                        </ListGroup.Item>
-
+ 
                         <ListGroup.Item>
                             <Row>
-                                <Col>Game Price:</Col>
+                                <Col>Item Price:</Col>
                                 <Col>${cart.itemsPrice}</Col>
                             </Row>
                         </ListGroup.Item>
-
-                        {/* <ListGroup.Item>
-                            <Row>
-                                <Col>Shipping:</Col>
-                                <Col>${cart.shippingPrice}</Col>
-                            </Row>
-                        </ListGroup.Item> */}
 
                         <ListGroup.Item>
                             <Row>
@@ -131,10 +126,7 @@ function PlaceOrderScreen({ history }) {
                         </ListGroup.Item>
 
                         <ListGroup.Item>
-                            {error && <Message variant='danger'>{error}</Message>}
-                        </ListGroup.Item>
-
-                        <ListGroup.Item>
+                        {error && <Message variant='danger'>{error}</Message>}
                             <Button
                                 type='button'
                                 className='btn-block'
@@ -148,7 +140,7 @@ function PlaceOrderScreen({ history }) {
                 </Card>
             </Col>
         </Row>
-    </div>
+    </Container>
 )
 }
 
