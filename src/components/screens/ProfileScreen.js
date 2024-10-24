@@ -150,28 +150,28 @@ function ProfileScreen({ history }) {
                 ) : errorOrders ? (
                     <Message variant='danger'>{errorOrders}</Message>
                 ) : (
-                    <Table className='text-center'>
+                    <Table className='text-center table-no-border'>
                         <thead>
-                            <tr>
-                                <th>Date of Purchase</th>
-                                <th>Cost of Medicine</th>
-                                <th>Paid</th>
-                                <th>See Details</th>
+                            <tr >
+                                <th style={{ border: 'none' }}>Date of Purchase</th>
+                                <th style={{ border: 'none' }}>Cost of Medicine</th>
+                                <th style={{ border: 'none' }}>Paid</th>
+                                <th style={{ border: 'none' }}>See Details</th>
                             </tr>
                         </thead>
                         <tbody>
                             {orders.map(order => (
                                 <tr key={order._id}>
-                                    <td>{order.createdAt.substring(0, 10)}</td>
-                                    <td>${order.totalPrice}</td>
-                                    <td>
+                                    <td style={{ border: 'none' }}>{order.createdAt.substring(0, 10)}</td>
+                                    <td style={{ border: 'none' }}>${order.totalPrice}</td>
+                                    <td style={{ border: 'none' }}>
                                         {order.isPaid ? (
                                             <i className='fas fa-check' style={{ color: 'green' }}></i>
                                         ) : (
                                             <i className='fas fa-times' style={{ color: 'red' }}></i>
                                         )}
                                     </td>
-                                    <td>
+                                    <td style={{ border: 'none' }}>
                                         <LinkContainer to={`/order/${order._id}`}>
                                             <Button className='btn-sm'>Details</Button>
                                         </LinkContainer>
