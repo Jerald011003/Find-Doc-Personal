@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Row, Col, ListGroup, Image, Card } from 'react-bootstrap'
+import { Button, Row, Col, ListGroup, Image, Card, Container } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { PayPalButton } from 'react-paypal-button-v2'
@@ -7,6 +7,7 @@ import Message from '../Message'
 import Loader from '../Loader'
 import { getOrderDetails, payOrder, deliverOrder } from '../../actions/orderActions'
 import { ORDER_PAY_RESET, ORDER_DELIVER_RESET } from '../../constants/orderConstants'
+// import './PayAppointmentScreen.css'; 
 
 function OrderScreen({ match, history }) {
     const orderId = match.params.id
@@ -80,7 +81,7 @@ function OrderScreen({ match, history }) {
     ) : error ? (
         <Message variant='danger'>{error}</Message>
     ) : (
-                <div>
+                <Container className='align-items-center justify-content-center' style={{ width: '700px' }}>
                     {/* <h1>Order: {order.Id}</h1> */}
                     <Row>
                         <Col md={12} >
@@ -96,8 +97,18 @@ function OrderScreen({ match, history }) {
                                                     <ListGroup.Item key={index} >
                                                     <Row className="align-items-center">
                                                       <Col md={1} className="mx-auto">
-                                                        <Image src={item.image} alt={item.name} fluid className="d-block"  />
+                                                      <div style={{ width: '150px' }}> {/* Adjust the width as needed */}
+                                                        <Image src={item.image} alt={item.name} fluid className="d-block" />
+                                                      </div>                                     
                                                       </Col>
+
+                                                      <Col md={3} className="mx-auto">
+                                                        <Link to={`/product/${item.product}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                                            <h6>{item.name}</h6>
+                                                        </Link>
+                                                    </Col>
+
+
                                                     </Row>
                                                   </ListGroup.Item>
                                                 ))}
@@ -141,18 +152,21 @@ function OrderScreen({ match, history }) {
 
 
                                     {!order.isPaid && (
-                                        <ListGroup.Item>
-                                            {loadingPay && <Loader />}
+                                       <ListGroup.Item style={{ width: '100%' }} className="align-items-center  justify-content-center">
+                                       {loadingPay && <Loader />}
+                                       {!sdkReady ? (
+                                           <Loader />
+                                       ) : (
 
-                                            {!sdkReady ? (
-                                                <Loader />
-                                            ) : (
-                                                    <PayPalButton
-                                                        amount={order.totalPrice}
-                                                        onSuccess={successPaymentHandler}
-                                                    />
-                                                )}
-                                        </ListGroup.Item>
+                                               <PayPalButton
+                                                //    className="paypal-button"
+                                                   amount={order.totalPrice}
+                                                   onSuccess={successPaymentHandler}
+                                               />
+                                    
+                                       )}
+                                   </ListGroup.Item>
+                                   
                                     )}
                                 </ListGroup>
                                 {loadingDeliver && <Loader />}
@@ -177,7 +191,7 @@ function OrderScreen({ match, history }) {
                             </Card>
                         </Col>
                     </Row>
-                </div>
+                </Container>
             )
 }
 
