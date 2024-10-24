@@ -51,7 +51,7 @@ export const savePaymentMethod = (data) => (dispatch) => {
     localStorage.setItem('paymentMethod', JSON.stringify(data));
 }
 
-// export const loadCart = (id) => async (dispatch) => {
-//     const { data } = await axiosInstance.get(`/api/cart/${id}`);
-//     dispatch({ type: CART_LOAD_CART, payload: data });
-// };
+export const loadCart = (id) => async (dispatch) => {
+    const { data } = await axiosInstance.get(`/api/cart/${id}`);
+    dispatch({ type: CART_LOAD_CART, payload: data });
+};
