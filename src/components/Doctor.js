@@ -15,7 +15,7 @@ function Doctor({ doctor }) {
 
       <Card.Body>
         <Card.Title as="div" className="text-truncate">
-          <h5 className="font-weight-bold">Dr. {doctor.user.name}</h5>
+          <h5 className="font-weight-bold ">Dr. {doctor.user.name}</h5>
         </Card.Title>
 
         <Card.Text className="text-muted">
