@@ -1,7 +1,8 @@
 .navbar {
     background-color: #fff !important; 
     border-bottom: 1px solid #e5e5e5;  
-    padding: 10px 20px !important;           
+    padding: 10px 20px !important;
+    box-shadow: none;  
   }
   
   .navbar .navbar-brand img {
@@ -79,4 +80,3 @@
     color: #0cc0df;
     cursor: pointer;
   }
-  
