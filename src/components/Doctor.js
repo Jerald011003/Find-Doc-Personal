@@ -28,7 +28,7 @@ function Doctor({ doctor }) {
             <span className="ml-1">{doctor.rating} ({doctor.numReviews} Reviews)</span>
           </div>
 
-          <span className="text-success font-weight-bold">${doctor.fee}</span>
+          <span className="text-success font-weight-bold">${doctor.charge_rates}/hr</span>
         </div>
 
         <Button 

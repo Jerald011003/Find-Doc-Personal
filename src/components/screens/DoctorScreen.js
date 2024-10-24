@@ -72,7 +72,7 @@ function DoctorScreen({ history }) {
               <Col md={3}>
                 <ListGroup variant="flush">
                   <ListGroup.Item>
-                    <h3>Dr. {doctor.name}</h3>
+                    <h3>Dr. {doctor.user.name}</h3>
                   </ListGroup.Item>
                   <ListGroup.Item>
                     Specialization: {doctor.specialization || "N/A"}
@@ -90,7 +90,15 @@ function DoctorScreen({ history }) {
                       <Row>
                         <Col>Booking Fee:</Col>
                         <Col>
-                          <strong>${doctor.fee || "N/A"}</strong>
+                          <strong className="text-success font-weight-bold">${doctor.fee || "N/A"}</strong>
+                        </Col>
+                      </Row>
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                      <Row>
+                        <Col>Charge Rate:</Col>
+                        <Col>
+                          <span className="text-success font-weight-bold">${doctor.charge_rates || "N/A"}/hr</span>
                         </Col>
                       </Row>
                     </ListGroup.Item>
@@ -98,7 +106,7 @@ function DoctorScreen({ history }) {
                       <Row>
                         <Col>Status:</Col>
                         <Col>
-                          {doctor.available ? "Available" : "Not Available"}
+                          <span className="text-success font-weight-bold">{doctor.available ? "Available" : "Not Available"}</span>
                         </Col>
                       </Row>
                     </ListGroup.Item>
