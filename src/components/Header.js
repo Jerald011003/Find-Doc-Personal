@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
+import { Navbar, Nav, Container, NavDropdown, Form, Button} from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { logout, getUserDetails } from "../actions/userActions";
 import { useDispatch, useSelector } from 'react-redux';
@@ -44,6 +44,27 @@ function Header() {
           <Nav className="mr-auto">
             {userInfo || user.name ? (
               <>
+           <Form inline className="d-flex align-items-center mx-2">
+            <Form.Control
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+              style={{ 
+                width: '180px', 
+                borderRadius: '20px 0 0 20px',
+                marginRight: '0'
+              }}
+            />
+            <Button 
+              variant="dark" 
+              style={{ 
+                borderRadius: '0 20px 20px 0',
+                marginLeft: '0'
+              }}
+            >
+              <i className="fas fa-search" style={{ color: 'white' }}></i>
+            </Button>
+          </Form>
                 <LinkContainer to="/">
                   <Nav.Link className="mx-1 fw-semibold">Doctors</Nav.Link>
                 </LinkContainer>
@@ -62,6 +83,8 @@ function Header() {
               </>
             ) : null}
           </Nav>
+            
+       
 
           <Nav className="ml-auto">
             {userInfo || user.name ? (
