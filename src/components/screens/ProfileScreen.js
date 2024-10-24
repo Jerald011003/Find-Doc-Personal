@@ -137,20 +137,20 @@ function ProfileScreen({ history }) {
                         />
                     </Form.Group>
 
-                    <Button type='submit' variant='primary'>
+                    <Button type='submit' variant='primary' style={{ marginTop: '10px'}}>
                         Update
                     </Button>
                 </Form>
             </Col>
 
-            <Col>
-                <h2 className='text-center'>Purchases</h2>
+            <Col md={10} className='justify-content-center' style={{ marginTop: '10px'}}>
+                <h2 className='text-left'>Purchases</h2>
                 {loadingOrders ? (
                     <Loader />
                 ) : errorOrders ? (
                     <Message variant='danger'>{errorOrders}</Message>
                 ) : (
-                    <Table striped responsive className='table-sm text-center'>
+                    <Table className='text-center'>
                         <thead>
                             <tr>
                                 <th>Date of Purchase</th>

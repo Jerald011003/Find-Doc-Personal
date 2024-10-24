@@ -53,6 +53,9 @@ class Doctor(models.Model):
     max_appointments = models.PositiveIntegerField(default=1) 
     image=models.ImageField(null=True,blank=True)
     # _id=models.AutoField(primary_key=True,editable=False)
+    rating=models.DecimalField(max_digits=7,decimal_places=2,null=True,blank=True)
+    numReviews=models.IntegerField(null=True,blank=True,default=0)
+    charge_rates = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def __str__(self):
         return self.user.first_name

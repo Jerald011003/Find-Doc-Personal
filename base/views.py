@@ -14,6 +14,7 @@ from .serializer import DoctorReviewSerializer, AppointmentSerializer, DoctorSer
 from datetime import datetime
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
+from django.db.models import Avg
 
 # !!Routes
 @api_view(['GET'])
@@ -423,12 +424,10 @@ def createDoctorReview(request, pk):
 
     reviews = doctor.reviews.all()
     doctor.numReviews = reviews.count()
-
-    total = sum([rev.rating for rev in reviews])
-    doctor.rating = total / doctor.numReviews if doctor.numReviews > 0 else 0
+    doctor.rating = reviews.aggregate(Avg('rating'))['rating__avg'] or 0 
     doctor.save()
 
-    return Response({'detail': 'Review added'}, status=status.HTTP_201_CREATED)
+    return Response({'detail': 'Review added successfully'}, status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

@@ -1,29 +1,45 @@
 import React from "react";
-import { Card, Button, Col } from "react-bootstrap";
+import { Card, Button, Col, Badge } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 function Doctor({ doctor }) {
   return (
-      <Card className="my-3 p-3 rounded ">
-       <Link to={`/doctor/${doctor.user._id}`}>
-        <Card.Img src={doctor.image} style={{ width: '250px', height: '150px' }} />
-        </Link>
+    <Card className="my-3 p-3 rounded shadow-sm" style={{ width: '18rem' }}>
+      <Link to={`/doctor/${doctor.user._id}`}>
+        <Card.Img 
+          variant="top" 
+          src={doctor.image} 
+          style={{ width: '100%', height: '150px', objectFit: 'cover' }} 
+        />
+      </Link>
 
+      <Card.Body>
+        <Card.Title as="div" className="text-truncate">
+          <h5 className="font-weight-bold">Dr. {doctor.user.name}</h5>
+        </Card.Title>
 
-        <Card.Body>
-            <Card.Title as="div">
-              <h3>Dr. {doctor.user.name}</h3>
-            </Card.Title>
+        <Card.Text className="text-muted">
+          <small>{doctor.specialization || "General Practitioner"}</small>
+        </Card.Text>
 
-          <Card.Text as="div">
-            <p>Specialty: {doctor.specialization || "N/A"}</p>
-          </Card.Text>
-          
-          <Button variant="primary" as={Link} to={`/doctor/${doctor.user._id}`}>
-            View Profile
-          </Button>
-        </Card.Body>
-      </Card>
+        <div className="d-flex justify-content-between align-items-center">
+          <div className="d-flex align-items-center">
+            <span className="text-warning">&#9733;</span> 
+            <span className="ml-1">{doctor.rating} ({doctor.numReviews} Reviews)</span>
+          </div>
+
+          <span className="text-success font-weight-bold">${doctor.fee}</span>
+        </div>
+
+        <Button 
+          variant="outline-primary" 
+          className="mt-3 w-100"
+          as={Link} 
+          to={`/doctor/${doctor.user._id}`}>
+          View Profile
+        </Button>
+      </Card.Body>
+    </Card>
   );
 }
 
