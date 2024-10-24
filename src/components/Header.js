@@ -3,7 +3,7 @@ import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { logout, getUserDetails } from "../actions/userActions";
 import { useDispatch, useSelector } from 'react-redux';
-
+import "./styles.css"
 function Header() {
   const userLogin = useSelector(state => state.userLogin);
   const { userInfo } = userLogin;
@@ -25,38 +25,37 @@ function Header() {
   const displayName = userInfo?.name || user?.name || ""; 
 
   return (
-    <Navbar bg="dark" variant="dark">
+    <Navbar bg="light" variant="light" className="navbar">
       <Container className="justify-content-between">
-        <LinkContainer to="/">
-        <Navbar.Brand style={{ height: '0px' }}> 
+      <LinkContainer to="/">
+      <Navbar.Brand style={{ height: '0', padding: 0 }}>
         <img
-          src="/images/finddoclogo.png" 
+          src="/images/finddoclogo.png"
           alt="Find Doc Logo"
-          style={{ width: '60px', height: '40px', objectFit: 'cover' }} 
           className="d-inline-block align-top"
+          style={{ maxWidth: '100%', height: 'auto', padding: 0, marginBottom:'8px'}}
         />
-        {' '}
       </Navbar.Brand>
+    </LinkContainer>
 
-        </LinkContainer>
         
         <Navbar.Toggle aria-controls="navbarScroll" />
-        <Navbar.Collapse id="navbarScroll" className="justify-content-between">
-          <Nav>
+        <Navbar.Collapse id="navbarScroll">
+          <Nav className="mr-auto">
             {userInfo || user.name ? (
               <>
                 <LinkContainer to="/">
-                  <Nav.Link className="mx-1"><i className="fas fa-user-md"></i> Doctors</Nav.Link>
+                  <Nav.Link className="mx-1 fw-semibold">Doctors</Nav.Link>
                 </LinkContainer>
 
                 <LinkContainer to="/allproduct">
-                <Nav.Link className="mx-1">
-                <i className="fas fa-medkit"></i> Medicines
+                <Nav.Link className="mx-1 fw-semibold">
+                Medicines
                 </Nav.Link>
               </LinkContainer>
               <LinkContainer to="/appointments">
-                <Nav.Link className="mx-1">
-                  <i className="fas fa-calendar-alt"></i> Appointment
+                <Nav.Link className="mx-1 fw-semibold">
+                   Appointment
                 </Nav.Link>
               </LinkContainer>
 
@@ -64,7 +63,7 @@ function Header() {
             ) : null}
           </Nav>
 
-          <Nav>
+          <Nav className="ml-auto">
             {userInfo || user.name ? (
               <>
                 <LinkContainer to="/cart">
