@@ -55,48 +55,45 @@ function DoctorScreen({ history }) {
       ) : (
         doctor && (
           <>
+
+           
             <Row>
 
-            <Row md={3} className="flex items-start p-4 border-b">
-    <div className="flex-shrink-0">
-        <img
-            src={doctor.user.profilePicture} // Replace with actual profile picture URL
-            alt="Profile"
-            className="w-15 h-15 rounded-full" // Adjust width and height as needed
-        />
-    </div>
-    <div className="ml-4">
-        <h3 className="text-xl font-semibold">Dr. {doctor.user.name}</h3>
-        <div className="flex items-center mt-1 space-x-2"> {/* Add space between elements */}
-            <span className="font-medium text-gray-500">{doctor.rating || "N/A"}</span>
-            <span className="text-gray-400">|</span>
-            <span className="font-medium text-gray-500">{doctor.reviewsCount || 0} Reviews</span>
-        </div>
-        <p className="mt-2">
-            <span className="font-medium">Specialization:</span> {doctor.specialization || "N/A"}
-        </p>
-        <p>
-            <span className="font-medium">Description:</span> {doctor.description || "No description available."}
-        </p>
-    </div>
-</Row>
+            <div className="flex items-start items-center p-3">
+              <div className="flex-shrink-0">
+                <img
+                  src={doctor.image}
+                  alt="Profile"
+                  className="w-11 h-10 rounded-full" 
+                />
+              </div>
+              <div className="ml-4">
+                <h3 className="text-xl font-semibold">Dr. {doctor.user.name}</h3>
+                <div className="flex items-center mt-1 space-x-2">
+                  <span className="font-medium text-gray-500">{doctor.rating || "N/A"}</span>
+                  <span className="text-gray-400">|</span>
+                  <span className="font-medium text-gray-500">{doctor.numReviews || 0} Reviews</span>
+                </div>
+              </div>
+            </div>
 
 
 
-              <Col md={6}>
-                {doctor.image ? (
-                  <Image
-                    src={doctor.image}
-                    alt={doctor.name}
-                    className="rounded-lg shadow-md w-full h-64 object-cover"
-                  />
-                ) : (
-                  <div className="h-64 flex items-center justify-center bg-gray-200 rounded-lg">
-                    <span>No image available</span>
-                  </div>
-                )}
-              </Col>
-
+            <Col md={6}>
+            <div className="w-700 h-400">
+              {doctor.image ? (
+                <Image
+                  src={doctor.image}
+                  alt={doctor.name}
+                  className="rounded-lg shadow-md object-cover"
+                />
+              ) : (
+                <div className="h-full flex items-center justify-center bg-gray-200 rounded-lg">
+                  <span>No image available</span>
+                </div>
+              )}
+            </div>
+            </Col>
 
               <Col md={3}>
                 <Card className="shadow-md">
