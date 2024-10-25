@@ -1,38 +1,36 @@
 import React from "react";
-import { Card, Button, Col, Badge } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 function Doctor({ doctor }) {
   return (
-    <Card className="my-1 p-2 rounded shadow-sm" style={{ width: '18rem' }}>
+    <div className="max-w-xs mx-auto my-4 bg-white rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:shadow-lg">
       <Link to={`/doctor/${doctor.user._id}`}>
-        <Card.Img 
-          variant="top" 
-          src={doctor.image} 
-          style={{ width: '100%', height: '150px', objectFit: 'cover' }} 
+        <img
+          className="w-full h-40 object-cover"
+          src={doctor.image}
+          alt={`Dr. ${doctor.user.name}`}
         />
       </Link>
-
-      <Card.Body>
-      <Card.Text as="div" className="text-truncate text-left" style={{ textAlign: 'left' }}>
-      <h6 className="font-weight-bold">Dr. {doctor.user.name}</h6>
-      </Card.Text>
-
-      <Card.Text className="text-muted text-left" style={{ textAlign: 'left' }}>
+      <div className="p-4">
+        <h6 className="font-bold text-lg text-gray-800 truncate">
+          Dr. {doctor.user.name}
+        </h6>
+        <p className="text-gray-600 text-sm mt-1">
           <small>{doctor.description}</small>
-      </Card.Text>
-
-
-        <div className="d-flex justify-content-between align-items-center">
-          <div className="d-flex align-items-center">
-            <span className="text-warning">&#9733;</span> 
-            <span className="ml-1">{doctor.rating} ({doctor.numReviews})</span>
+        </p>
+        <div className="flex justify-between items-center mt-3">
+          <div className="flex items-center">
+            <span className="text-yellow-400 text-lg">&#9733;</span>
+            <span className="ml-1 text-gray-700">
+              {doctor.rating} ({doctor.numReviews})
+            </span>
           </div>
-          <span className="font-weight-bold">${doctor.charge_rates}/hr</span>
+          <span className="font-semibold text-gray-800">
+            ${doctor.charge_rates}/hr
+          </span>
         </div>
-
-      </Card.Body>
-    </Card>
+      </div>
+    </div>
   );
 }
 
