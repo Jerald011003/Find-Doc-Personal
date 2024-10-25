@@ -81,7 +81,7 @@ function Header() {
               </LinkContainer>
               <LinkContainer to="/appointments">
                 <Nav.Link className="mx-1 fw-semibold">
-                   Appointment
+                   Appointments
                 </Nav.Link>
               </LinkContainer>
 

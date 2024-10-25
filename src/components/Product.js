@@ -20,9 +20,9 @@ function Product({ product }) {
         </Link>
 
       <Card.Body>
-        <Link to={`/product/${product._id}`}>
-          <Card.Title as="div">
-            <strong>{product.name}</strong>
+        <Link to={`/product/${product._id}`} className="no-underline">
+          <Card.Title as="div" className="font-bold text-lg text-gray-800 truncate transition-colors duration-300 hover:text-[#0cc0df] no-underline">
+            {product.name}
           </Card.Title>
         </Link>
 
