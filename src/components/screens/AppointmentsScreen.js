@@ -5,20 +5,20 @@ import { Container, ListGroup, ListGroupItem, Spinner, Alert, Button, Modal, For
 import VideoCallScreen from './VideoCallScreen';
 import { useParams, useHistory } from 'react-router-dom';
 import { createDoctorReview } from '../../actions/doctorActions';
+import { Link } from "react-router-dom";
 
 const AppointmentsScreen = ({history}) => {
   const [inVideoCall, setInVideoCall] = useState(false);
   const [currentAppointment, setCurrentAppointment] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [googleMeetLink, setGoogleMeetLink] = useState('');
-
   const dispatch = useDispatch();
 
   const appointmentList = useSelector((state) => state.appointmentList);
   const { loading, error, appointments} = appointmentList;
 
   const appointmentDetails = useSelector((state) => state.appointmentDetails);
-  const { appointment} = appointmentDetails;
+  const { appointment } = appointmentDetails;
 
   const userDetails = useSelector((state) => state.userDetails);
   const { user } = userDetails;
@@ -113,7 +113,20 @@ const AppointmentsScreen = ({history}) => {
   };
 
   return (
-    <Container className="appointments-container mt-4">
+    <Container className="appointments-container ">
+            <div>
+    <Link to="/" className="my-3">
+    <i className="fas fa-home p-3 text-gray-500 -mb-3 transition-colors duration-300 hover:text-[#0cc0df]"></i>
+    </Link>    
+    <span className="mr-3">/</span>
+    <Link to={`/`} className="mr-3 my-3 font-semibold text-gray-500 truncate transition-colors duration-300 hover:text-[#0cc0df] no-underline">
+        Doctor
+    </Link>
+    <span className="mr-3">/</span>
+    <Link to={`/appointments`} className="my-3 font-semibold text-gray-500 truncate transition-colors duration-300 hover:text-[#0cc0df] no-underline">
+        Appointments
+    </Link>
+    </div>
       {inVideoCall && currentAppointment ? (
         <VideoCallScreen appointment={currentAppointment} onEndCall={endVideoCall} />
       ) : (
@@ -126,7 +139,8 @@ const AppointmentsScreen = ({history}) => {
             <ListGroup>
               {Array.isArray(appointments) && appointments.length > 0 ? (
                 appointments.map((item) => (
-                  <ListGroupItem key={item.id} className="mb-3">
+                  
+                  <ListGroupItem key={item.id} className="mb-3 mt-4">
                     {/* <h1>ID {item.id}</h1> */}
                     <h6>Client: {item.user_name}</h6>
                     <h6>Doctor: {item.doctor_name}</h6>

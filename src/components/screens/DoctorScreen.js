@@ -41,13 +41,17 @@ function DoctorScreen({ history }) {
       console.error("Failed to create appointment", error);
     }
   };
-
   return (
     <div className="container mx-auto p-1">
+    <div>
     <Link to="/" className="my-3">
-    <i className="fas fa-home text-black p-3 -mb-3"></i>
-</Link>
-
+    <i className="fas fa-home p-3 text-gray-500 -mb-3 transition-colors duration-300 hover:text-[#0cc0df]"></i>
+    </Link>    
+    <span className="mr-3">/</span>
+    <Link to={`/doctor/${id}`} className="my-3 font-semibold text-gray-500 truncate transition-colors duration-300 hover:text-[#0cc0df] no-underline">
+        Doctor
+    </Link>
+    </div>
       {loading ? (
         <Loader />
       ) : error ? (
