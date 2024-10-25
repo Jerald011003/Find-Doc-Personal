@@ -45,7 +45,7 @@ function DoctorScreen({ history }) {
   return (
     <div className="container mx-auto p-1">
     <Link to="/" className="my-3">
-    <i className="fas fa-home text-black p-3"></i>
+    <i className="fas fa-home text-black p-3 -mb-3"></i>
 </Link>
 
       {loading ? (
@@ -59,6 +59,7 @@ function DoctorScreen({ history }) {
            
             <Row>
 
+            <Col md={10}>
             <div className="flex items-start items-center p-4">
               <div className="flex-shrink-0">
                 <img
@@ -76,32 +77,33 @@ function DoctorScreen({ history }) {
                 </div>
               </div>
             </div>
+            </Col>
 
 
-
-              <Col md={6}>
-                {doctor.image ? (
+            <Col md={6} className="w-[700px] h-[400px] mb-4"> 
+              {doctor.image ? (
                   <Image
-                    src={doctor.image}
-                    alt={doctor.name}
-                    className="rounded-lg shadow-md w-full h-64 object-cover"
+                      src={doctor.image}
+                      alt={doctor.name}
+                      className="rounded-lg shadow-md w-full h-full object-cover" 
                   />
-                ) : (
-                  <div className="h-64 flex items-center justify-center bg-gray-200 rounded-lg">
-                    <span>No image available</span>
+              ) : (
+                  <div className="h-full flex items-center justify-center bg-gray-200 rounded-lg">
+                      <span>No image available</span>
                   </div>
-                )}
-              </Col>
+              )}
+          </Col>
 
 
-              <Col md={3}>
+
+              <Col md={3} className="ml-0">
                 <Card className="shadow-md">
                   <ListGroup variant="flush">
                     <ListGroup.Item>
                       <Row>
                         <Col>Booking Fee:</Col>
                         <Col>
-                          <strong className="text-success font-semibold">${doctor.fee || "N/A"}</strong>
+                          <strong className="text-dark font-semibold">${doctor.fee || "N/A"}</strong>
                         </Col>
                       </Row>
                     </ListGroup.Item>
@@ -109,7 +111,7 @@ function DoctorScreen({ history }) {
                       <Row>
                         <Col>Charge Rate:</Col>
                         <Col>
-                          <span className="text-success font-semibold">${doctor.charge_rates || "N/A"}/hr</span>
+                          <span className="text-dark font-semibold">${doctor.charge_rates || "N/A"}/hr</span>
                         </Col>
                       </Row>
                     </ListGroup.Item>
@@ -132,6 +134,7 @@ function DoctorScreen({ history }) {
                         className="w-full"
                         disabled={!doctor.available || loadingAppointment}
                         type="button"
+                        variant="dark"
                         onClick={bookHandler}
                       >
                         Consult
@@ -142,32 +145,35 @@ function DoctorScreen({ history }) {
               </Col>
             </Row>
 
-            <Row className="mt-6">
-              <Col md={6}>
-                <h4 className="text-lg font-semibold">Reviews</h4>
+            <Row className=" p-3 ">
+  <Col md={6} className="bg-white shadow-md rounded-lg p-1">
+    {/* <h4 className="text-lg font-semibold  pb-2 mb-4 text-gray-700">Reviews</h4> */}
 
-                {(!reviews || reviews.length === 0) && (
-                  <Message variant="info">No Reviews</Message>
-                )}
+    {(!reviews || reviews.length === 0) && (
+      <Message variant="info">No Reviews</Message>
+    )}
 
-                {loadingReviews ? (
-                  <Loader />
-                ) : errorReviews ? (
-                  <Message variant="danger">{errorReviews}</Message>
-                ) : (
-                  <ListGroup variant="flush">
-                    {reviews.map((review) => (
-                      <ListGroup.Item key={review._id} className="border-b">
-                        <strong>{review.user_name}</strong>
-                        <Rating value={review.rating} color="f8e825" />
-                        <p className="text-sm text-gray-500">{review.createdAt ? review.createdAt.substring(0, 10) : "Date not available"}</p>
-                        <p className="text-gray-600">{review.comment}</p>
-                      </ListGroup.Item>
-                    ))}
-                  </ListGroup>
-                )}
-              </Col>
-            </Row>
+    {loadingReviews ? (
+      <Loader />
+    ) : errorReviews ? (
+      <Message variant="danger">{errorReviews}</Message>
+    ) : (
+      <ListGroup variant="flush">
+        {reviews.map((review) => (
+          <ListGroup.Item key={review._id} className="border-b border-gray-300 py-4">
+            <div className="flex justify-between items-center">
+              <strong className="text-gray-800">{review.user_name}</strong>
+              <Rating value={review.rating} color="f8e825" />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">{review.createdAt ? review.createdAt.substring(0, 10) : "Date not available"}</p>
+            <p className="text-gray-600 mt-1">{review.comment}</p>
+          </ListGroup.Item>
+        ))}
+      </ListGroup>
+    )}
+  </Col>
+</Row>
+
           </>
         )
       )}
