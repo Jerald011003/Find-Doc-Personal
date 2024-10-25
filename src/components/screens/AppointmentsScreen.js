@@ -7,7 +7,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import { createDoctorReview } from '../../actions/doctorActions';
 import { Link } from "react-router-dom";
 import CalendarScreen from '../CalendarScreen';
-
+import AppointmentItem from './AppointmentItem';
 const AppointmentsScreen = ({history}) => {
   const [inVideoCall, setInVideoCall] = useState(false);
   const [currentAppointment, setCurrentAppointment] = useState(null);
@@ -27,6 +27,9 @@ const AppointmentsScreen = ({history}) => {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
+
+  const [showReviewed, setShowReviewed] = useState(false);
+  const toggleReviewed = () => setShowReviewed(!showReviewed);
 
   useEffect(() => {
     if (user) {
@@ -112,13 +115,7 @@ const AppointmentsScreen = ({history}) => {
         });
     }
   };
-  const [showPending, setShowPending] = useState(true);
-  const [showReviewed, setShowReviewed] = useState(false);
 
-  const togglePending = () => setShowPending(!showPending);
-  const toggleReviewed = () => setShowReviewed(!showReviewed);
-
-  
   return (
     <Container className="appointments-container ">
             <div>
@@ -145,94 +142,61 @@ const AppointmentsScreen = ({history}) => {
           ) : (
             // Starts Here
             <div className="container mx-auto mt-6 p-4">
-            {/* <h2 className="text-2xl font-bold text-gray-800 mb-4">Appointments</h2> */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              {/* Calendar Section */}
-              <div className="bg-white rounded-lg p-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                {/* Calendar Section */}
+                <div className="bg-white rounded-lg p-3">
                   <CalendarScreen />
                 </div>
-      
-              {/* Appointments List Section */}
-              <div className="bg-white shadow-lg rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">History</h3>
-      
-                {/* Pending Appointments */}
-                <div className="mb-4">
-                  <Button className="w-full text-left" variant='dark' onClick={togglePending}>
-                    {showPending ? 'Hide Pending Appointments' : 'Show Pending Appointments'}
-                  </Button>
-                  {showPending && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
-                      {Array.isArray(appointments) &&
-                        appointments.filter(item => item.status === 'Pending')
+
+                {/* Appointments List Section */}
+                <div className="bg-white shadow-lg rounded-lg p-6">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">History</h3>
+
+                  {/* All Appointments */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+
+                    {Array.isArray(appointments) &&
+                      appointments
+                        .filter(item => item.status !== 'Reviewed')
                         .map(item => (
-                          <div key={item.id} className="p-4 border border-gray-300 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
-                            <h6 className="font-semibold text-gray-700">Client: <span className="font-normal">{item.user_name}</span></h6>
-                            <h6 className="font-semibold text-gray-700">Doctor: <span className="font-normal">{item.doctor_name}</span></h6>
-                            <p className="text-gray-600">Time: <span className="font-normal">{item.appointment_time}</span></p>
-                            <p className="text-gray-600">Booking Fee: <span className="font-normal">${item.fee}</span></p>
-                            <p className="text-gray-600">
-                              Status:
-                              <span className={`ms-2 ${getStatusClass(item.status)}`}>
-                                {getStatusIcon(item.status)}
-                                {item.status}
-                              </span>
-                            </p>
-                            <div className="mt-3">
-                              {user.name === item.doctor_name && (
-                                <Button  className="bg-yellow-500 text-white hover:bg-yellow-600 mt-2" onClick={() => handleUpdateAppointment(item)}>
-                                  Create Google Meet Link
-                                </Button>
-                              )}
-                              {user.name === item.user_name && item.user_name !== item.doctor_name && (
-                                <Button className="bg-yellow-500 text-white hover:bg-yellow-600 mt-2" onClick={() => handlePayButtonClick(item.id)}>
-                                  Pay
-                                </Button>
-                              )}
-                            </div>
-                          </div>
+                          <AppointmentItem 
+                            key={item.id} 
+                            item={item} 
+                            user={user} 
+                            handleUpdateAppointment={handleUpdateAppointment} 
+                            handlePayButtonClick={handlePayButtonClick} 
+                            handleCreateReviewClick={handleCreateReviewClick} 
+                            handleJoinGoogleMeet={handleJoinGoogleMeet}
+                            handleUpdatetoConsulted={handleUpdatetoConsulted}
+                            startVideoCall={startVideoCall}
+                          />
                         ))}
-                    </div>
-                  )}
-                </div>
-      
-                {/* Reviewed Appointments */}
-                <div>
-                  <Button className="w-full text-left" variant='dark' onClick={toggleReviewed}>
-                    {showReviewed ? 'Hide Reviewed Appointments' : 'Show Reviewed Appointments'}
-                  </Button>
-                  {showReviewed && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
-                      {appointments
-                        .filter(item => item.status === 'Reviewed')
-                        .map(item => (
-                          <div key={item.id} className="p-4 border border-gray-300 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
-                            <h6 className="font-semibold text-gray-700">Client: <span className="font-normal">{item.user_name}</span></h6>
-                            <h6 className="font-semibold text-gray-700">Doctor: <span className="font-normal">{item.doctor_name}</span></h6>
-                            <p className="text-gray-600">Time: <span className="font-normal">{item.appointment_time}</span></p>
-                            <p className="text-gray-600">Booking Fee: <span className="font-normal">${item.fee}</span></p>
-                            <p className="text-gray-600">
-                              Status:
-                              <span className={`ms-2 ${getStatusClass(item.status)}`}>
-                                {getStatusIcon(item.status)}
-                                {item.status}
-                              </span>
-                            </p>
-                            <div className="mt-3">
-                              {item.status === 'Consulted' && user.name === item.user_name && item.user_name !== item.doctor_name && (
-                                <Button className="bg-blue-500 text-white hover:bg-blue-600" onClick={() => handleCreateReviewClick(item)}>
-                                  Review
-                                </Button>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  )}
+
+                  </div>
+
+                  {/* Collapsible Reviewed Appointments */}
+                  <div className="mb-4">
+                    <Button className="w-full text-left" variant="dark" onClick={toggleReviewed}>
+                      {showReviewed ? 'Hide Reviewed Appointments' : 'Show Reviewed Appointments'}
+                    </Button>
+                    {showReviewed && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                        {appointments
+                          .filter(item => item.status === 'Reviewed')
+                          .map(item => (
+                            <AppointmentItem 
+                              key={item.id} 
+                              item={item} 
+                              user={user} 
+                              handleCreateReviewClick={handleCreateReviewClick} 
+                            />
+                          ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
           )}
         </>
       )}
