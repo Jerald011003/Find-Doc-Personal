@@ -59,7 +59,7 @@ function DoctorScreen({ history }) {
            
             <Row>
 
-            <div className="flex items-start items-center p-3">
+            <div className="flex items-start items-center p-4">
               <div className="flex-shrink-0">
                 <img
                   src={doctor.image}
@@ -79,21 +79,20 @@ function DoctorScreen({ history }) {
 
 
 
-            <Col md={6}>
-            <div className="w-700 h-400">
-              {doctor.image ? (
-                <Image
-                  src={doctor.image}
-                  alt={doctor.name}
-                  className="rounded-lg shadow-md object-cover"
-                />
-              ) : (
-                <div className="h-full flex items-center justify-center bg-gray-200 rounded-lg">
-                  <span>No image available</span>
-                </div>
-              )}
-            </div>
-            </Col>
+              <Col md={6}>
+                {doctor.image ? (
+                  <Image
+                    src={doctor.image}
+                    alt={doctor.name}
+                    className="rounded-lg shadow-md w-full h-64 object-cover"
+                  />
+                ) : (
+                  <div className="h-64 flex items-center justify-center bg-gray-200 rounded-lg">
+                    <span>No image available</span>
+                  </div>
+                )}
+              </Col>
+
 
               <Col md={3}>
                 <Card className="shadow-md">
