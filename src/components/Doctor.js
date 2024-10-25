@@ -12,9 +12,12 @@ function Doctor({ doctor }) {
         />
       </Link>
       <div className="p-4">
-        <h6 className="font-bold text-lg text-gray-800 truncate">
+        <Link
+          to={`/doctor/${doctor.user._id}`}
+          className="font-bold text-lg text-gray-800 truncate transition-colors duration-300 hover:text-[#0cc0df] no-underline"
+        >
           Dr. {doctor.user.name}
-        </h6>
+        </Link>
         <p className="text-gray-600 text-sm mt-1">
           <small>{doctor.description}</small>
         </p>

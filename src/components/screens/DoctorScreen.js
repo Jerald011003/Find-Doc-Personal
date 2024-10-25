@@ -43,10 +43,10 @@ function DoctorScreen({ history }) {
   };
 
   return (
-    <div>
-      <Link to="/" className="btn btn-dark my-3">
-        Go Back
-      </Link>
+    <div className="container mx-auto p-1">
+    <Link to="/" className="my-3">
+    <i className="fas fa-home text-black p-3"></i>
+</Link>
 
       {loading ? (
         <Loader />
@@ -56,41 +56,56 @@ function DoctorScreen({ history }) {
         doctor && (
           <>
             <Row>
+
+            <Row md={3} className="flex items-start p-4 border-b">
+    <div className="flex-shrink-0">
+        <img
+            src={doctor.user.profilePicture} // Replace with actual profile picture URL
+            alt="Profile"
+            className="w-15 h-15 rounded-full" // Adjust width and height as needed
+        />
+    </div>
+    <div className="ml-4">
+        <h3 className="text-xl font-semibold">Dr. {doctor.user.name}</h3>
+        <div className="flex items-center mt-1 space-x-2"> {/* Add space between elements */}
+            <span className="font-medium text-gray-500">{doctor.rating || "N/A"}</span>
+            <span className="text-gray-400">|</span>
+            <span className="font-medium text-gray-500">{doctor.reviewsCount || 0} Reviews</span>
+        </div>
+        <p className="mt-2">
+            <span className="font-medium">Specialization:</span> {doctor.specialization || "N/A"}
+        </p>
+        <p>
+            <span className="font-medium">Description:</span> {doctor.description || "No description available."}
+        </p>
+    </div>
+</Row>
+
+
+
               <Col md={6}>
                 {doctor.image ? (
                   <Image
                     src={doctor.image}
                     alt={doctor.name}
-                    style={{ width: "650px", height: "400px" }}
-                    fluid
+                    className="rounded-lg shadow-md w-full h-64 object-cover"
                   />
                 ) : (
-                  <div>No image available</div>
+                  <div className="h-64 flex items-center justify-center bg-gray-200 rounded-lg">
+                    <span>No image available</span>
+                  </div>
                 )}
               </Col>
 
-              <Col md={3}>
-                <ListGroup variant="flush">
-                  <ListGroup.Item>
-                    <h3>Dr. {doctor.user.name}</h3>
-                  </ListGroup.Item>
-                  <ListGroup.Item>
-                    Specialization: {doctor.specialization || "N/A"}
-                  </ListGroup.Item>
-                  <ListGroup.Item>
-                    Description: {doctor.description || "No description available."}
-                  </ListGroup.Item>
-                </ListGroup>
-              </Col>
 
               <Col md={3}>
-                <Card>
+                <Card className="shadow-md">
                   <ListGroup variant="flush">
                     <ListGroup.Item>
                       <Row>
                         <Col>Booking Fee:</Col>
                         <Col>
-                          <strong className="text-success font-weight-bold">${doctor.fee || "N/A"}</strong>
+                          <strong className="text-success font-semibold">${doctor.fee || "N/A"}</strong>
                         </Col>
                       </Row>
                     </ListGroup.Item>
@@ -98,7 +113,7 @@ function DoctorScreen({ history }) {
                       <Row>
                         <Col>Charge Rate:</Col>
                         <Col>
-                          <span className="text-success font-weight-bold">${doctor.charge_rates || "N/A"}/hr</span>
+                          <span className="text-success font-semibold">${doctor.charge_rates || "N/A"}/hr</span>
                         </Col>
                       </Row>
                     </ListGroup.Item>
@@ -106,18 +121,19 @@ function DoctorScreen({ history }) {
                       <Row>
                         <Col>Status:</Col>
                         <Col>
-                          <span className="text-success font-weight-bold">{doctor.available ? "Available" : "Not Available"}</span>
+                          <span className={`font-semibold ${doctor.available ? 'text-green-600' : 'text-red-600'}`}>
+                            {doctor.available ? "Available" : "Not Available"}
+                          </span>
                         </Col>
                       </Row>
                     </ListGroup.Item>
-
                     <ListGroup.Item>
                       {loadingAppointment && <Loader />}
                       {errorAppointment && (
                         <Message variant="danger">{errorAppointment}</Message>
                       )}
                       <Button
-                        className="btn-block"
+                        className="w-full"
                         disabled={!doctor.available || loadingAppointment}
                         type="button"
                         onClick={bookHandler}
@@ -130,9 +146,9 @@ function DoctorScreen({ history }) {
               </Col>
             </Row>
 
-            <Row>
+            <Row className="mt-6">
               <Col md={6}>
-                <h4 className="mt-3">Reviews</h4>
+                <h4 className="text-lg font-semibold">Reviews</h4>
 
                 {(!reviews || reviews.length === 0) && (
                   <Message variant="info">No Reviews</Message>
@@ -145,19 +161,17 @@ function DoctorScreen({ history }) {
                 ) : (
                   <ListGroup variant="flush">
                     {reviews.map((review) => (
-                     <ListGroup.Item key={review._id}>
-                     <strong>{review.user_name}</strong>
-                     <Rating value={review.rating} color="f8e825" />
-                     <p>{review.createdAt ? review.createdAt.substring(0, 10) : "Date not available"}</p>
-                     <p>{review.comment}</p>
-                   </ListGroup.Item>
-                   
+                      <ListGroup.Item key={review._id} className="border-b">
+                        <strong>{review.user_name}</strong>
+                        <Rating value={review.rating} color="f8e825" />
+                        <p className="text-sm text-gray-500">{review.createdAt ? review.createdAt.substring(0, 10) : "Date not available"}</p>
+                        <p className="text-gray-600">{review.comment}</p>
+                      </ListGroup.Item>
                     ))}
                   </ListGroup>
                 )}
               </Col>
             </Row>
-
           </>
         )
       )}
