@@ -265,10 +265,17 @@ def getDoctorDetail(request, pk):
 def create_appointment(request):
     print(request.data)  # Log the incoming request data
     if request.method == 'POST':
+        # Check for existing pending appointments for the user
+        pending_appointments = Appointment.objects.filter(user=request.user, status='Pending')
+
+        if pending_appointments.exists():
+            return Response({"detail": "You have pending appointments. Please resolve them before creating a new appointment."}, 
+                            status=status.HTTP_400_BAD_REQUEST)
+
         serializer = AppointmentSerializer(data=request.data, context={'request': request})
 
         if serializer.is_valid():
-            serializer.validated_data['user'] = request.user 
+            serializer.validated_data['user'] = request.user
             
             doctor_id = request.data.get('doctor') 
             if doctor_id:

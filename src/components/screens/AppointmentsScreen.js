@@ -6,6 +6,7 @@ import VideoCallScreen from './VideoCallScreen';
 import { useParams, useHistory } from 'react-router-dom';
 import { createDoctorReview } from '../../actions/doctorActions';
 import { Link } from "react-router-dom";
+import CalendarScreen from '../CalendarScreen';
 
 const AppointmentsScreen = ({history}) => {
   const [inVideoCall, setInVideoCall] = useState(false);
@@ -111,7 +112,13 @@ const AppointmentsScreen = ({history}) => {
         });
     }
   };
+  const [showPending, setShowPending] = useState(true);
+  const [showReviewed, setShowReviewed] = useState(false);
 
+  const togglePending = () => setShowPending(!showPending);
+  const toggleReviewed = () => setShowReviewed(!showReviewed);
+
+  
   return (
     <Container className="appointments-container ">
             <div>
@@ -136,75 +143,96 @@ const AppointmentsScreen = ({history}) => {
           ) : error ? (
             <Alert variant="danger">{error}</Alert>
           ) : (
-            <ListGroup>
-              {Array.isArray(appointments) && appointments.length > 0 ? (
-                appointments.map((item) => (
-                  
-                  <ListGroupItem key={item.id} className="mb-3 mt-4">
-                    {/* <h1>ID {item.id}</h1> */}
-                    <h6>Client: {item.user_name}</h6>
-                    <h6>Doctor: {item.doctor_name}</h6>
-                    <p></p>
-                    <p>Time: {item.appointment_time}</p>
-                    <p>Booking Fee: {item.fee} </p>
-                    <p >
-                      Status:
-                      <span className={`ms-2 ${getStatusClass(item.status)}`}>
-                        {getStatusIcon(item.status)}
-                        {item.status}
-                      </span>
-                    </p>
-
-                    {item.status === 'Consulted' && user.name === item.user_name && item.user_name !== item.doctor_name && (
-                      <>
-                        <Button variant="primary" onClick={() => handleCreateReviewClick(item)} style={{ marginRight: '10px' }}>
-                          Review
-                        </Button>
-                      </>
-                    )}
-                    {item.status === 'Approved' && (
-                      <>
-                        <Button variant="primary" onClick={() => startVideoCall(item)} style={{ marginRight: '10px' }}>
-                          Start Video Call
-                        </Button>
-                        <Button variant="success" onClick={() => handleJoinGoogleMeet(item.google_meet_link)} style={{ marginRight: '10px' }}>
-                          Join Google Meet
-                        </Button>
-                        {item.status === 'Approved' && user.name === item.doctor_name && (
-                        <>
-                        <Button variant="warning" onClick={() => handleUpdateAppointment(item)} style={{ marginRight: '10px' }} >
-                          Update Google Meet Link
-                        </Button>
-                        <Button variant="warning" onClick={() => handleUpdatetoConsulted(item)} >
-                          Mark as Consulted
-                        </Button>
-                        </>
-                         )}
-                      </>
-                    )}
-                    {item.status === 'Pending' && user.name === item.doctor_name && ( 
-                      <>
-                        <Button variant="warning" onClick={() => handleUpdateAppointment(item)}>
-                          Create Google Meet Link
-                        </Button>
-                      </>
-                    )}
-                    {item.status === 'Pending' && user.name === item.user_name && item.user_name !== item.doctor_name && ( 
-                      <>
-                        <Button
-                        variant="warning"
-                        onClick={() => handlePayButtonClick(item.id)} 
-                      >
-                        Pay
-                      </Button>
-                      </>
-                    )}
-                  </ListGroupItem>
-                ))
-              ) : (
-                <Alert variant="info">No appointments found.</Alert>
-              )}
-            </ListGroup>
+            // Starts Here
+            <div className="container mx-auto mt-6 p-4">
+            {/* <h2 className="text-2xl font-bold text-gray-800 mb-4">Appointments</h2> */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {/* Calendar Section */}
+              <div className="bg-white rounded-lg p-3">
+                  <CalendarScreen />
+                </div>
+      
+              {/* Appointments List Section */}
+              <div className="bg-white shadow-lg rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">History</h3>
+      
+                {/* Pending Appointments */}
+                <div className="mb-4">
+                  <Button className="w-full text-left" variant='dark' onClick={togglePending}>
+                    {showPending ? 'Hide Pending Appointments' : 'Show Pending Appointments'}
+                  </Button>
+                  {showPending && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                      {Array.isArray(appointments) &&
+                        appointments.filter(item => item.status === 'Pending')
+                        .map(item => (
+                          <div key={item.id} className="p-4 border border-gray-300 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+                            <h6 className="font-semibold text-gray-700">Client: <span className="font-normal">{item.user_name}</span></h6>
+                            <h6 className="font-semibold text-gray-700">Doctor: <span className="font-normal">{item.doctor_name}</span></h6>
+                            <p className="text-gray-600">Time: <span className="font-normal">{item.appointment_time}</span></p>
+                            <p className="text-gray-600">Booking Fee: <span className="font-normal">${item.fee}</span></p>
+                            <p className="text-gray-600">
+                              Status:
+                              <span className={`ms-2 ${getStatusClass(item.status)}`}>
+                                {getStatusIcon(item.status)}
+                                {item.status}
+                              </span>
+                            </p>
+                            <div className="mt-3">
+                              {user.name === item.doctor_name && (
+                                <Button  className="bg-yellow-500 text-white hover:bg-yellow-600 mt-2" onClick={() => handleUpdateAppointment(item)}>
+                                  Create Google Meet Link
+                                </Button>
+                              )}
+                              {user.name === item.user_name && item.user_name !== item.doctor_name && (
+                                <Button className="bg-yellow-500 text-white hover:bg-yellow-600 mt-2" onClick={() => handlePayButtonClick(item.id)}>
+                                  Pay
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  )}
+                </div>
+      
+                {/* Reviewed Appointments */}
+                <div>
+                  <Button className="w-full text-left" variant='dark' onClick={toggleReviewed}>
+                    {showReviewed ? 'Hide Reviewed Appointments' : 'Show Reviewed Appointments'}
+                  </Button>
+                  {showReviewed && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                      {appointments
+                        .filter(item => item.status === 'Reviewed')
+                        .map(item => (
+                          <div key={item.id} className="p-4 border border-gray-300 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+                            <h6 className="font-semibold text-gray-700">Client: <span className="font-normal">{item.user_name}</span></h6>
+                            <h6 className="font-semibold text-gray-700">Doctor: <span className="font-normal">{item.doctor_name}</span></h6>
+                            <p className="text-gray-600">Time: <span className="font-normal">{item.appointment_time}</span></p>
+                            <p className="text-gray-600">Booking Fee: <span className="font-normal">${item.fee}</span></p>
+                            <p className="text-gray-600">
+                              Status:
+                              <span className={`ms-2 ${getStatusClass(item.status)}`}>
+                                {getStatusIcon(item.status)}
+                                {item.status}
+                              </span>
+                            </p>
+                            <div className="mt-3">
+                              {item.status === 'Consulted' && user.name === item.user_name && item.user_name !== item.doctor_name && (
+                                <Button className="bg-blue-500 text-white hover:bg-blue-600" onClick={() => handleCreateReviewClick(item)}>
+                                  Review
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
           )}
         </>
       )}
