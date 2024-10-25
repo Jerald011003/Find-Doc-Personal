@@ -310,7 +310,7 @@ class DoctorAppointmentsView(APIView):
         try:
             doctor = Doctor.objects.get(user=request.user) 
         except Doctor.DoesNotExist:
-            return Response({"detail": "Doctor not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "No appointments found for this user/doctor."}, status=status.HTTP_404_NOT_FOUND)
 
         appointments = Appointment.objects.filter(doctor=doctor)
 

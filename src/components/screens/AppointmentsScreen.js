@@ -150,7 +150,7 @@ const AppointmentsScreen = ({history}) => {
 
                 {/* Appointments List Section */}
                 <div className="bg-white shadow-lg rounded-lg p-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">History</h3>
+                  <h6 className="text-lg font-semibold text-gray-800 mb-4">Your Appointments</h6>
 
                   {/* All Appointments */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
