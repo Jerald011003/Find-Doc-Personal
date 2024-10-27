@@ -111,10 +111,10 @@ class AppointmentSerializer(serializers.ModelSerializer):
     fee = serializers.DecimalField(max_digits=10, decimal_places=2, source='doctor.fee', read_only=True) 
     doctorId = serializers.IntegerField(source='doctor.id', read_only=True)  # Include doctor ID
     charge_rate = serializers.DecimalField(max_digits=10, decimal_places=2, source='doctor.charge_rates', read_only=True) 
-
+    userofdoctorId = serializers.IntegerField(source='doctor.user.id', read_only=True)
     class Meta:
         model = Appointment
-        fields = ['chargeisPaid', 'charge_rate', 'elapsed_time', 'id', 'user_name', 'doctor_name', 'doctorId', 'appointment_time', 'status', 'google_meet_link', 'isPaid', 'paidAt', 'fee'] 
+        fields = ['userofdoctorId', 'chargeisPaid', 'charge_rate', 'elapsed_time', 'id', 'user_name', 'doctor_name', 'doctorId', 'appointment_time', 'status', 'google_meet_link', 'isPaid', 'paidAt', 'fee'] 
 
 class DoctorReviewSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(source='user.get_full_name', read_only=True)  
