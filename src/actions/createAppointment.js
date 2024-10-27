@@ -20,7 +20,13 @@ import {
   APPOINTMENT_REVIEW_REQUEST,
   APPOINTMENT_REVIEW_FAIL,
   APPOINTMENT_REVIEW_SUCCESS,
+  SAVE_ELAPSED_TIME,
 } from '../constants/appointmentConstants';
+
+export const saveElapsedTime = (appointmentId, elapsedTime) => ({
+  type: SAVE_ELAPSED_TIME,
+  payload: { appointmentId, elapsedTime },
+});
 
 export const createAppointment = (appointmentData) => async (dispatch, getState) => {
   try {
@@ -45,11 +51,14 @@ export const createAppointment = (appointmentData) => async (dispatch, getState)
       type: APPOINTMENT_CREATE_SUCCESS,
       payload: data,
     });
+
+    return data;
   } catch (error) {
     dispatch({
       type: APPOINTMENT_CREATE_FAIL,
       payload: error.response && error.response.data.detail ? error.response.data.detail : error.message,
     });
+    throw error;
   }
 };
 

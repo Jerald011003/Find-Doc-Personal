@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateAppointmentStatus, reviewAppointment, getAppointmentDetails, listDoctorAppointments, listUserAppointments, updateAppointment } from '../../actions/createAppointment';
+import { saveElapsedTime, updateAppointmentStatus, reviewAppointment, getAppointmentDetails, listDoctorAppointments, listUserAppointments, updateAppointment } from '../../actions/createAppointment';
 import { Container, ListGroup, ListGroupItem, Spinner, Alert, Button, Modal, Form } from 'react-bootstrap';
 import VideoCallScreen from './VideoCallScreen';
 import { useParams, useHistory } from 'react-router-dom';
@@ -8,18 +8,25 @@ import { createDoctorReview } from '../../actions/doctorActions';
 import { Link } from "react-router-dom";
 import CalendarScreen from '../CalendarScreen';
 import AppointmentItem from './AppointmentItem';
-const AppointmentsScreen = ({history}) => {
+import axios from 'axios';
+
+const AppointmentsScreen = ({ history }) => {
   const [inVideoCall, setInVideoCall] = useState(false);
   const [currentAppointment, setCurrentAppointment] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [googleMeetLink, setGoogleMeetLink] = useState('');
   const dispatch = useDispatch();
 
-  const appointmentList = useSelector((state) => state.appointmentList);
-  const { loading, error, appointments} = appointmentList;
+  const [timer, setTimer] = useState(0); 
+  const [isTimerRunning, setIsTimerRunning] = useState(false); 
 
-  const appointmentDetails = useSelector((state) => state.appointmentDetails);
-  const { appointment } = appointmentDetails;
+  const appointmentList = useSelector((state) => state.appointmentList);
+  const { loading, error, appointments } = appointmentList;
+
+  // const appointmentDetails = useSelector((state) => state.appointmentDetails);
+  // const { appointment } = appointmentDetails;
+
+  // const appointment = appointments.find(app => app.id === appointmentId);
 
   const userDetails = useSelector((state) => state.userDetails);
   const { user } = userDetails;
@@ -35,21 +42,61 @@ const AppointmentsScreen = ({history}) => {
     if (user) {
       dispatch(listDoctorAppointments());
       dispatch(listUserAppointments());
-  }}, [dispatch, user]);
+    }
+  }, [dispatch, user]);
 
   const startVideoCall = (appointment) => {
     setCurrentAppointment(appointment);
     setInVideoCall(true);
-  };
+    setIsTimerRunning(true);
 
-  const endVideoCall = () => {
-    setInVideoCall(false);
-    setCurrentAppointment(null);
-  };
+    if (appointment.elapsed_time) {
+        const [hours, minutes, seconds] = appointment.elapsed_time.split(':').map(Number);
+        const totalElapsedSeconds = (hours * 3600) + (minutes * 60) + seconds;
+        setTimer(totalElapsedSeconds);
+    } else {
+        setTimer(0);
+    }
+};
+
+
+
+const endVideoCall = () => {
+  setInVideoCall(false);
+  setCurrentAppointment(null);
+  setIsTimerRunning(false); 
+  window.location.reload();
+  if (currentAppointment) {
+    const elapsedTime = timer; 
+
+    axios.patch(`/api/appointments/${currentAppointment.id}/elapsed_time/`, {
+      elapsed_time: elapsedTime, 
+    })
+    .then(response => {
+      console.log('Elapsed time saved:', response.data);
+    })
+    .catch(error => {
+      console.error('Error saving elapsed time:', error.response.data);
+    });
+  }
+};
+
+
+  useEffect(() => {
+    let interval = null;
+    if (isTimerRunning) {
+      interval = setInterval(() => {
+        setTimer((prevTimer) => prevTimer + 1);
+      }, 1000);
+    } else if (!isTimerRunning && timer !== 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval); 
+  }, [isTimerRunning, timer]);
 
   const handleJoinGoogleMeet = (meetUrl) => {
     if (meetUrl) {
-      window.open(meetUrl, '_blank'); 
+      window.open(meetUrl, '_blank');
     } else {
       alert("No Google Meet link provided.");
     }
@@ -59,39 +106,41 @@ const AppointmentsScreen = ({history}) => {
     setCurrentAppointment(appointment);
     setGoogleMeetLink(appointment.google_meet_link || '');
     setShowUpdateModal(true);
+    window.location.reload();
   };
 
   const handleUpdatetoConsulted = (item) => {
     const statusData = {
       status: 'Consulted',
     };
-  
+
     if (item) {
       dispatch(updateAppointmentStatus(item.id, statusData.status));
+      window.location.reload();
     }
   };
-  
+
   const handleSubmitUpdate = () => {
     if (currentAppointment) {
       dispatch(updateAppointment(currentAppointment.id, googleMeetLink));
       setShowUpdateModal(false);
       setGoogleMeetLink('');
-      console.log(currentAppointment)
+      window.location.reload();
+      // console.log(currentAppointment);
     }
   };
+
   const handlePayButtonClick = (itemId) => {
     history.push(`/appointments/${itemId}`);
     console.log(itemId);
-  
+    // window.location.reload();
   };
-  // const handleCreateReview = (item) => {
-  //   console.log(item.doctorId)
-  //   const reviewData = {
-  //     rating,
-  //     comment,
-  //   };
-  //   dispatch(createDoctorReview(item.doctorId, reviewData))
-  // }
+
+  const handlePayChargeButtonClick = (itemId) => {
+    history.push(`/appointments/${itemId}/paycharge`);
+    console.log(itemId);
+    // window.location.reload();
+  };
 
   const handleCreateReviewClick = (item) => {
     setCurrentAppointment(item);
@@ -109,6 +158,7 @@ const AppointmentsScreen = ({history}) => {
         .then(() => {
           dispatch(reviewAppointment(currentAppointment.id, { isReviewed: true, status: 'Reviewed' }));
           setShowReviewModal(false);
+          window.location.reload();
         })
         .catch((error) => {
           console.error("Error creating review:", error);
@@ -117,22 +167,25 @@ const AppointmentsScreen = ({history}) => {
   };
 
   return (
-    <Container className="appointments-container ">
-            <div>
-    <Link to="/" className="my-3">
-    <i className="fas fa-home p-3 text-gray-500 -mb-3 transition-colors duration-300 hover:text-[#0cc0df]"></i>
-    </Link>    
-    <span className="mr-3">/</span>
-    <Link to={`/`} className="mr-3 my-3 font-semibold text-gray-500 truncate transition-colors duration-300 hover:text-[#0cc0df] no-underline">
-        Doctor
-    </Link>
-    <span className="mr-3">/</span>
-    <Link to={`/appointments`} className="my-3 font-semibold text-gray-500 truncate transition-colors duration-300 hover:text-[#0cc0df] no-underline">
-        Appointments
-    </Link>
-    </div>
+    <Container className="appointments-container">
+      <div>
+        <Link to="/" className="my-3">
+          <i className="fas fa-home p-3 text-gray-500 -mb-3 transition-colors duration-300 hover:text-[#0cc0df]"></i>
+        </Link>
+        <span className="mr-3">/</span>
+        <Link to={`/`} className="mr-3 my-3 font-semibold text-gray-500 truncate transition-colors duration-300 hover:text-[#0cc0df] no-underline">
+          Doctor
+        </Link>
+        <span className="mr-3">/</span>
+        <Link to={`/appointments`} className="my-3 font-semibold text-gray-500 truncate transition-colors duration-300 hover:text-[#0cc0df] no-underline">
+          Appointments
+        </Link>
+      </div>
       {inVideoCall && currentAppointment ? (
-        <VideoCallScreen appointment={currentAppointment} onEndCall={endVideoCall} />
+        <div>
+          <VideoCallScreen appointment={currentAppointment} onEndCall={endVideoCall} />
+          <p className="text-lg mt-4">Elapsed Time: {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}</p>
+        </div>
       ) : (
         <>
           {loading ? (
@@ -154,24 +207,23 @@ const AppointmentsScreen = ({history}) => {
 
                   {/* All Appointments */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
-
                     {Array.isArray(appointments) &&
                       appointments
                         .filter(item => item.status !== 'Reviewed')
                         .map(item => (
-                          <AppointmentItem 
-                            key={item.id} 
-                            item={item} 
-                            user={user} 
-                            handleUpdateAppointment={handleUpdateAppointment} 
-                            handlePayButtonClick={handlePayButtonClick} 
-                            handleCreateReviewClick={handleCreateReviewClick} 
+                          <AppointmentItem
+                            key={item.id}
+                            item={item}
+                            user={user}
+                            handleUpdateAppointment={handleUpdateAppointment}
+                            handlePayButtonClick={handlePayButtonClick}
+                            handleCreateReviewClick={handleCreateReviewClick}
                             handleJoinGoogleMeet={handleJoinGoogleMeet}
                             handleUpdatetoConsulted={handleUpdatetoConsulted}
                             startVideoCall={startVideoCall}
+                            handlePayChargeButtonClick={handlePayChargeButtonClick}
                           />
                         ))}
-
                   </div>
 
                   {/* Collapsible Reviewed Appointments */}
@@ -184,11 +236,11 @@ const AppointmentsScreen = ({history}) => {
                         {appointments
                           .filter(item => item.status === 'Reviewed')
                           .map(item => (
-                            <AppointmentItem 
-                              key={item.id} 
-                              item={item} 
-                              user={user} 
-                              handleCreateReviewClick={handleCreateReviewClick} 
+                            <AppointmentItem
+                              key={item.id}
+                              item={item}
+                              user={user}
+                              handleCreateReviewClick={handleCreateReviewClick}
                             />
                           ))}
                       </div>
@@ -210,27 +262,27 @@ const AppointmentsScreen = ({history}) => {
           <Form>
             <Form.Group controlId="googleMeetLink">
               <Form.Label>Google Meet Link</Form.Label>
-              <Form.Control 
-                type="url" 
-                placeholder="Enter Google Meet link" 
+              <Form.Control
+                type="url"
+                placeholder="Enter Google Meet link"
                 value={googleMeetLink}
-                onChange={(e) => setGoogleMeetLink(e.target.value)} 
+                onChange={(e) => setGoogleMeetLink(e.target.value)}
               />
             </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowUpdateModal(false)}>
-            Cancel
+            Close
           </Button>
           <Button variant="primary" onClick={handleSubmitUpdate}>
-            Create Link
+            Save Changes
           </Button>
         </Modal.Footer>
       </Modal>
 
-      {/* Review Modal */}
-      <Modal show={showReviewModal} onHide={() => setShowReviewModal(false)}>
+       {/* Review Modal */}
+       <Modal show={showReviewModal} onHide={() => setShowReviewModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Leave a Review</Modal.Title>
         </Modal.Header>
@@ -273,40 +325,6 @@ const AppointmentsScreen = ({history}) => {
       </Modal>
     </Container>
   );
-};
-
-const getStatusClass = (status) => {
-  switch (status) {
-    case 'Reviewed':
-      return 'text-success';
-    case 'Consulted':
-      return 'text-success';
-    case 'Approved':
-      return 'text-success';
-    case 'Pending':
-      return 'text-warning';
-    case 'Cancelled':
-      return 'text-danger';
-    default:
-      return '';
-  }
-};
-
-const getStatusIcon = (status) => {
-  switch (status) {
-    case 'Reviewed':
-      return <i className="bi bi-check-circle-fill text-success" />;
-    case 'Consulted':
-      return <i className="bi bi-check-circle-fill text-success" />;
-    case 'Approved':
-      return <i className="bi bi-check-circle-fill text-success" />;
-    case 'Pending':
-      return <i className="bi bi-clock-fill text-warning" />;
-    case 'Cancelled':
-      return <i className="bi bi-x-circle-fill text-danger" />;
-    default:
-      return <i className="bi bi-question-circle" />;
-  }
 };
 
 export default AppointmentsScreen;

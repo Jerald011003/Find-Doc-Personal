@@ -1,4 +1,5 @@
 import "./App.css";
+import './output.css';
 import { Container } from "react-bootstrap";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import Footer from "./components/Footer";
@@ -23,6 +24,7 @@ import AllProductScreen from "./components/screens/AllProductScreen";
 import AppointmentsScreen from "./components/screens/AppointmentsScreen"
 import VideoCallScreen from "./components/screens/VideoCallScreen"
 import PayAppointmentScreen from "./components/screens/PayAppointmentScreen"
+import PayChargeScreen from "./components/screens/PayChargeScreen"
 
 function App() {
   
@@ -35,6 +37,7 @@ function App() {
           <Route path="/doctor/:id" component={DoctorScreen} exact />
           <Route path="/appointments" component={AppointmentsScreen} exact />
           <Route path='/appointments/:id' component={PayAppointmentScreen} />
+          <Route path='/appointments/:id/paycharge' component={PayChargeScreen} />
           <Route path="/videocall" component={VideoCallScreen} exact />
           <Route path="/allproduct" component={AllProductScreen} exact />
           <Route path="/login" component={LoginScreen} exact />

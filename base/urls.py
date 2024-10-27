@@ -43,5 +43,6 @@ urlpatterns = [
     path('doctors/<int:doctor_id>/reviews/', views.doctor_review_list, name='doctor-reviews'),
     path('appointments/doctor/update/', views.DoctorUpdateAppointmentsView.as_view(), name='doctor-appointment-update'),
     path('appointments/doctor/consulted-update/', views.DoctorUpdateStatusToConsultedView.as_view(), name='doctor-appointment-consulted-update'),
+    path('appointments/<int:appointment_id>/elapsed_time/', views.save_elapsed_time, name='save_elapsed_time'),
 
 ]

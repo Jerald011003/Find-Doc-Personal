@@ -4,7 +4,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { logout, getUserDetails } from "../actions/userActions";
 import { useDispatch, useSelector } from 'react-redux';
 import "./styles.css"
-import '../output.css';
+
 
 
 function Header() {

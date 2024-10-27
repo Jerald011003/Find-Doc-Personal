@@ -7,7 +7,7 @@ import { PayPalButton } from 'react-paypal-button-v2';
 import Loader from '../Loader';
 import './PayAppointmentScreen.css'; 
 
-const PayAppointmentScreen = ({history}) => {
+const PayAppointmentScreen = ({ history }) => {
     const { id } = useParams();
     const dispatch = useDispatch();
 
@@ -56,32 +56,46 @@ const PayAppointmentScreen = ({history}) => {
         window.location.reload();
     };
 
+    const calculateTotalFee = () => {
+        const elapsedHours = parseFloat(appointment.elapsed_time) || 0; 
+        const chargeRate = parseFloat(appointment.charge_rate) || 0; 
+    
+        
+        if (elapsedHours < 1) {
+            return (10).toFixed(2); 
+        }
+        
+        return (elapsedHours * chargeRate).toFixed(2);
+    };
+    
+
     return (
         <Container className="payment-screen-container my-5">
-        {loading ? (
-            <Spinner animation="border" variant="primary" />
-        ) : error ? (
-            <Alert variant="danger">{error}</Alert>
-        ) : (
-            <Row className="justify-content-center">
-                <Col md={8}>
-                    <Card className="p-4 shadow">
-                        <h4 className="text-center mb-4">Pay for Booking</h4>
-                        {appointment && (
-                            <div className="appointment-details">
-                                {/* <h5 className="font-weight-bold">Client: <span>{appointment.user_name}</span></h5> */}
-                                <h5 className="font-weight-bold">Dr. <span>{appointment.doctor_name}</span></h5>
-                                <h6 className="font-weight-normal">Date: <span>{new Date(appointment.appointment_time).toLocaleDateString('en-US')}</span></h6>
-                                <h6 className="font-weight-normal">Status: <span>{appointment.isPaid ? 'Booking Already Paid' : appointment.status}</span></h6>
-                                <h6 className="font-weight-normal">Price: <span className="text-success">${appointment.fee}</span></h6>
-                                {!appointment.isPaid ? (
-                                    !sdkReady ? (
+            {loading ? (
+                <Spinner animation="border" variant="primary" />
+            ) : error ? (
+                <Alert variant="danger">{error}</Alert>
+            ) : (
+                <Row className="justify-content-center">
+                    <Col md={8}>
+                        <Card className="p-4 shadow">
+                            <h4 className="text-center mb-4">Pay for Consultation</h4>
+                            {appointment && (
+                                <div className="appointment-details">
+                                    <h5 className="font-weight-bold">Dr. <span>{appointment.doctor_name}</span></h5>
+                                    <h6 className="font-weight-normal">Date: <span>{new Date(appointment.appointment_time).toLocaleDateString('en-US')}</span></h6>
+                                    <h6 className="font-weight-normal">Status: <span>{appointment.status === 'PayChargeRates' ? 'Pay Charge/Hr' : appointment.status}</span></h6>
+                                    <h6 className="font-weight-normal">Time Recorded: <span>{appointment.elapsed_time} hours</span></h6>
+                                    <h6 className="font-weight-normal">Charge/Hr: <span className="text-success">${appointment.charge_rate}</span></h6>
+                                    <h6 className="font-weight-bold">Total Amount: <span className="text-success">${calculateTotalFee()}</span></h6>
+
+                                    {!sdkReady ? (
                                         <Loader />
                                     ) : (
                                         <div className="text-center paypal-button">
                                             <PayPalButton
                                                 className="paypal-button"
-                                                amount={appointment.fee}
+                                                amount={calculateTotalFee()}
                                                 onSuccess={successPaymentHandler}
                                                 options={{
                                                     clientId: "AfWCkVHsxTIHY7IU9rVzqHLAFUcZjU6Lnrqf8h81x7cIdpIJHvomiPo4Vr_RqlayO56tCESJ9D0r6ldo",
@@ -89,17 +103,14 @@ const PayAppointmentScreen = ({history}) => {
                                                 }}
                                             />
                                         </div>
-                                    )
-                                ) : (
-                                    <div className="text-success"></div>
-                                )}
-                            </div>
-                        )}
-                    </Card>
-                </Col>
-            </Row>
-        )}
-    </Container>
+                                    )}
+                                </div>
+                            )}
+                        </Card>
+                    </Col>
+                </Row>
+            )}
+        </Container>
     );
 };
 

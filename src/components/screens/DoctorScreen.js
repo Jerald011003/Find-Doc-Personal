@@ -55,7 +55,7 @@ function DoctorScreen({ history }) {
       {loading ? (
         <Loader />
       ) : error ? (
-        <Message variant='danger'>An error occurred. Please try again later.</Message>
+        <Message variant='danger'>Please login first.</Message>
       ) : (
         doctor && (
           <>

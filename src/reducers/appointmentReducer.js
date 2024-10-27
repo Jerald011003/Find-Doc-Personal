@@ -21,6 +21,8 @@ import {
     APPOINTMENT_REVIEW_REQUEST,
     APPOINTMENT_REVIEW_FAIL,
     APPOINTMENT_REVIEW_SUCCESS,
+
+    SAVE_ELAPSED_TIME,
 } from '../constants/appointmentConstants';
 
 import { USER_LOGOUT } from '../constants/userConstants';
@@ -29,6 +31,23 @@ const initialState = {
     loading: false,
     error: null,
 };
+
+export const appointmentReducer = (state = initialState, action) => {
+    switch (action.type) {
+      case SAVE_ELAPSED_TIME:
+        return {
+          ...state,
+          appointment: state.appointment.map(appointment =>
+            appointment.id === action.payload.appointmentId
+              ? { ...appointment, elapsedTime: action.payload.elapsedTime }
+              : appointment
+          ),
+        };
+      // Other cases...
+      default:
+        return state;
+    }
+  };
 
 export const appointmentCreateReducer = (state = initialState, action) => {
     switch (action.type) {

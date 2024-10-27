@@ -15,7 +15,36 @@ from datetime import datetime
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from django.db.models import Avg
+from datetime import timedelta
+# from google.oauth2 import id_token
+# from google.auth.transport import requests
+# from rest_framework_simplejwt.tokens import RefreshToken
+# from backend.settings import *
 
+@api_view(['PATCH'])
+def save_elapsed_time(request, appointment_id):
+    try:
+        appointment = Appointment.objects.get(id=appointment_id)
+    except Appointment.DoesNotExist:
+        return Response({'error': 'Appointment not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    # Extract elapsed time from the request data
+    elapsed_time = request.data.get('elapsed_time', None)
+
+    if elapsed_time is not None:
+        # Convert the elapsed time to timedelta
+        if isinstance(elapsed_time, int):
+            # Assuming elapsed_time is in seconds
+            appointment.elapsed_time = timedelta(seconds=elapsed_time)
+            appointment.status = "PayChargeRates"  # Update status to PayChargeRates
+        else:
+            return Response({'error': 'Elapsed time should be an integer representing seconds'}, status=status.HTTP_400_BAD_REQUEST)
+
+        appointment.save()
+        serializer = AppointmentSerializer(appointment)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    return Response({'error': 'Elapsed time not provided'}, status=status.HTTP_400_BAD_REQUEST)
 # !!Routes
 @api_view(['GET'])
 def getRoutes(request):
@@ -140,6 +169,33 @@ def updateOrderToDelivered(request, pk):
         return Response({'detail': 'Order does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 # !!Token Auth
+
+# class GoogleLoginAPIView(APIView):
+#     def post(self, request):
+#         token = request.data.get('token')
+#         try:
+#             id_info = id_token.verify_oauth2_token(token, requests.Request(), settings.GOOGLE_CLIENT_ID)
+
+#             email = id_info.get('email')
+#             user, created = CustomUser.objects.get_or_create(email=email, defaults={
+#                 'first_name': id_info.get('name'),
+#                 'password': CustomUser.objects.make_random_password(),  # Temporary password
+#             })
+
+#             refresh = RefreshToken.for_user(user)
+#             return Response({
+#                 'refresh': str(refresh),
+#                 'access': str(refresh.access_token),
+#                 'user': {
+#                     'id': user.id,
+#                     'email': user.email,
+#                     'first_name': user.first_name,
+#                 }
+#             }, status=status.HTTP_200_OK)
+
+#         except ValueError:
+#             return Response({'detail': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+        
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     def validate(self,attrs):
@@ -263,15 +319,26 @@ def getDoctorDetail(request, pk):
 @api_view(['POST'])
 # @permission_classes([IsAuthenticated])
 def create_appointment(request):
-    print(request.data)  # Log the incoming request data
+    print(request.data) 
     if request.method == 'POST':
-        # Check for existing pending appointments for the user
+
+        if request.user.is_doctor:
+            return Response(
+                {"detail": "You are registered as a doctor and cannot create an appointment."}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    
         pending_appointments = Appointment.objects.filter(user=request.user, status='Pending')
+        paychargerates_appointments = Appointment.objects.filter(user=request.user, status='PayChargeRates')
 
         if pending_appointments.exists():
             return Response({"detail": "You have pending appointments. Please resolve them before creating a new appointment."}, 
                             status=status.HTTP_400_BAD_REQUEST)
 
+        if paychargerates_appointments.exists():
+            return Response({"detail": "You have to pay charge/hr for appointments. Please resolve them before creating a new appointment."}, 
+                            status=status.HTTP_400_BAD_REQUEST)
+        
         serializer = AppointmentSerializer(data=request.data, context={'request': request})
 
         if serializer.is_valid():
@@ -379,18 +446,25 @@ def getAppointmentById(request, pk):
         return Response({'detail': 'Appointment does not exist'}, status=404)
     
 @api_view(['PUT'])
-# @permission_classes([IsAuthenticated])
 def updateAppointmentToPaid(request, pk):
     try:
         appointment = Appointment.objects.get(id=pk)
-        appointment.isPaid = True
-        appointment.status = 'Approved'
-        appointment.paidAt = datetime.now()
-        appointment.save()
-        return Response({'detail': 'Appointment was paid'}, status=status.HTTP_200_OK)
+        
+        if not appointment.isPaid:
+            appointment.isPaid = True
+            appointment.status = 'Approved'
+            appointment.paidAt = datetime.now()
+            appointment.save()
+            return Response({'detail': 'Appointment was paid and status updated to Approved'}, status=status.HTTP_200_OK)
+        else:
+            appointment.chargeisPaid = True
+            appointment.status = 'Consulted'
+            appointment.save()
+            return Response({'detail': 'Appointment status updated to Consulted'}, status=status.HTTP_200_OK)
+
     except Appointment.DoesNotExist:
         return Response({'detail': 'Appointment does not exist'}, status=status.HTTP_404_NOT_FOUND)
-
+    
 @api_view(['PUT'])
 # @permission_classes([IsAuthenticated])
 def updateAppointmentToReviewed(request, pk):
@@ -437,7 +511,7 @@ def createDoctorReview(request, pk):
     return Response({'detail': 'Review added successfully'}, status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def doctor_review_list(request, doctor_id):
     try:
         doctor = Doctor.objects.get(user__id=doctor_id)
