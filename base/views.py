@@ -16,6 +16,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from django.db.models import Avg
 from datetime import timedelta
+from django.db.models import Q
+from django.shortcuts import render
 # from google.oauth2 import id_token
 # from google.auth.transport import requests
 # from rest_framework_simplejwt.tokens import RefreshToken
@@ -45,6 +47,37 @@ def save_elapsed_time(request, appointment_id):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     return Response({'error': 'Elapsed time not provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def search_api(request):
+    query = request.GET.get('q', '')
+    
+    # Search doctors based on user and specialization fields
+    doctor_results = Doctor.objects.filter(
+        Q(user__first_name__icontains=query) |
+        Q(user__last_name__icontains=query) |
+        Q(specialization__icontains=query)
+    )
+    
+    # Search products based on name, brand, category, and description fields
+    product_results = Product.objects.filter(
+        Q(name__icontains=query) |
+        Q(brand__icontains=query) |
+        Q(category__icontains=query) |
+        Q(description__icontains=query)
+    )
+    
+    # Serialize the data
+    doctor_data = DoctorSerializer(doctor_results, many=True).data
+    product_data = ProductSerializer(product_results, many=True).data
+    
+    return Response({
+        'query': query,
+        'doctor_results': doctor_data,
+        'product_results': product_data,
+    })
+
+
 # !!Routes
 @api_view(['GET'])
 def getRoutes(request):
