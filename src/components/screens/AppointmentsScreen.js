@@ -10,7 +10,7 @@ import CalendarScreen from '../CalendarScreen';
 import AppointmentItem from './AppointmentItem';
 import axios from 'axios';
 
-const AppointmentsScreen = ({ history }) => {
+const AppointmentsScreen = ({ history, doctor }) => {
   const [inVideoCall, setInVideoCall] = useState(false);
   const [currentAppointment, setCurrentAppointment] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -58,7 +58,6 @@ const AppointmentsScreen = ({ history }) => {
         setTimer(0);
     }
 };
-
 
 
 const endVideoCall = () => {
@@ -184,7 +183,7 @@ const endVideoCall = () => {
       {inVideoCall && currentAppointment ? (
         <div>
           <VideoCallScreen appointment={currentAppointment} onEndCall={endVideoCall} />
-          <p className="text-lg mt-4">Elapsed Time: {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}</p>
+          <p className="text-lg mt-4">Recording Time: {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}</p>
         </div>
       ) : (
         <>

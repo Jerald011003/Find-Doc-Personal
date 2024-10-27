@@ -25,7 +25,7 @@ import AppointmentsScreen from "./components/screens/AppointmentsScreen"
 import VideoCallScreen from "./components/screens/VideoCallScreen"
 import PayAppointmentScreen from "./components/screens/PayAppointmentScreen"
 import PayChargeScreen from "./components/screens/PayChargeScreen"
-
+import SearchResults from "./components/SearchResults";
 function App() {
   
   return (
@@ -54,8 +54,9 @@ function App() {
           <Route path='/admin/productlist' component={ProductListScreen} />
           <Route path='/admin/product/:id/edit' component={ProductEditScreen} />
           <Route path='/admin/orderlist' component={OrderListScreen} />
+          <Route path='/search' component={SearchResults} />
 
-        </Container>
+          </Container>
       </main>
 
       <Footer />

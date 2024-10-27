@@ -49,6 +49,9 @@ import { appointmentCreateReducer,
     appointmentReducer ,
  } from './reducers/appointmentReducer';
 
+ import { searchReducer } from './reducers/searchReducers';
+
+
 const reducer = combineReducers({
     cart:cartReducer,
     appointmentDetails: appointmentDetailsReducer,
@@ -57,6 +60,7 @@ const reducer = combineReducers({
     appointmentPay: appointmentPayReducer,
     appointmentReview: appointmentReviewReducer,
     appointment: appointmentReducer,
+    searchResults: searchReducer,
 
     doctorReviews: doctorReviewsReducer ,
     doctorList: doctorListReducer,

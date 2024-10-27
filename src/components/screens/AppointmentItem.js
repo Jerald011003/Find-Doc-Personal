@@ -1,12 +1,23 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import axios from 'axios';
-const AppointmentItem = ({ item, user, handlePayChargeButtonClick, handleJoinGoogleMeet, startVideoCall, handleUpdatetoConsulted, handleUpdateAppointment, handlePayButtonClick, handleCreateReviewClick }) => {
+import { Link } from "react-router-dom";
+import { useSelector } from 'react-redux';
 
+const AppointmentItem = ({ item, user, handlePayChargeButtonClick, handleJoinGoogleMeet, startVideoCall, handleUpdatetoConsulted, handleUpdateAppointment, handlePayButtonClick, handleCreateReviewClick }) => {
+  const userLogin = useSelector(state => state.userLogin);
+  const { userInfo } = userLogin;
+  console.log(userInfo)
+  
   return (
     <div className="p-4 border border-gray-300 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
-      <h6 className="font-semibold text-gray-700">Client: <span className="font-normal">{item.user_name}</span></h6>
-      <h6 className="font-semibold text-gray-700">Doctor: <span className="font-normal">{item.doctor_name}</span></h6>
+      <h6 className="font-semibold text-gray-700">Client: <span className="font-normal">{userInfo && item.user_name === userInfo.name ? 'You' : item.user_name || 'N/A'}</span></h6>
+      <h6 className="font-semibold text-gray-700">Doctor: <Link
+          to={`/doctor/${item.userofdoctorId}`}
+          className="font-normal no-underline"
+        >
+          {item.doctor_name}
+        </Link></h6>
       <p className="text-gray-600">Date: <span className="font-normal">{new Date(item.appointment_time).toLocaleDateString('en-US')}</span></p>
       <p className="text-gray-600">Booking Fee: <span className="text-success">{item.isPaid ? 'Paid' : item.fee}</span></p>
       <p className="text-gray-600">Charge/Hr: <span className="text-success">${item.charge_rate}</span></p>

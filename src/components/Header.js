@@ -2,12 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Navbar, Nav, Container, NavDropdown, Form, Button} from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { logout, getUserDetails } from "../actions/userActions";
+import { searchItems } from "../actions/searchActions";
 import { useDispatch, useSelector } from 'react-redux';
 import "./styles.css"
-
+import { useParams, useHistory } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 
 function Header() {
+  // const navigate = useNavigate();
+
+  const history = useHistory();
+  const [searchQuery, setSearchQuery] = useState("");
   const userLogin = useSelector(state => state.userLogin);
   const { userInfo } = userLogin;
   const dispatch = useDispatch();
@@ -27,6 +33,13 @@ function Header() {
 
   const displayName = userInfo?.name || user?.name || ""; 
 
+  const onSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      dispatch(searchItems(searchQuery)); 
+      history.push(`/search?q=${searchQuery}`); 
+    }
+  };
 
   return (
     <Navbar bg="light" variant="light" expand="lg" className="navbar">
@@ -49,23 +62,22 @@ function Header() {
             {userInfo || user.name ? (
               <>
             
-                    <Form inline className="mx-3 d-flex align-items-center">
+                     <Form inline onSubmit={onSearch} className="mx-3 d-flex align-items-center">
                       <Form.Control
                         type="search"
                         placeholder="Search"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                         aria-label="Search"
-                        style={{ 
-                          width: '180px', 
+                        style={{
+                          width: '180px',
                           borderRadius: '20px 0 0 20px',
                         }}
                       />
                       <Button 
+                        type="submit"
                         variant="dark" 
-                        // onClick={toggleSearch}
-                        style={{ 
-                          borderRadius: '0 20px 20px 0',
-                          marginLeft: '0'
-                        }}
+                        style={{ borderRadius: '0 20px 20px 0', marginLeft: '0' }}
                       >
                         <i className="fas fa-search" style={{ color: 'white' }}></i>
                       </Button>

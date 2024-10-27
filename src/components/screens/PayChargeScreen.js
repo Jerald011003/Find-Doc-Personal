@@ -62,7 +62,7 @@ const PayAppointmentScreen = ({ history }) => {
     
         
         if (elapsedHours < 1) {
-            return (10).toFixed(2); 
+            return (appointment.charge_rate); 
         }
         
         return (elapsedHours * chargeRate).toFixed(2);
