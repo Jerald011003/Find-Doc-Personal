@@ -1,0 +1,5 @@
+[✔] Make appointment
+[✔] Video call (online consult) 
+[✔] Online pharmacy shop (e-commerce)
+[✔] Feedback and rating system 
+[✔] Search Engine
